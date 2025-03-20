@@ -1,0 +1,12 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o tmp/main.exe cmd/app/main.go"  # Build binary thay vì go run
+bin = "tmp/main.exe"                            # Thêm .exe cho Windows
+
+[watch]
+dir = ["cmd/app"]                               # Chỉ watch thư mục chứa main.go
+ignore_dir = ["tmp", "vendor", ".git"]
+extensions = ["go"]
+recursive = true
