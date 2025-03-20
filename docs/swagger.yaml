@@ -1,0 +1,18 @@
+info:
+  contact:
+    email: anhquoc18092003@gmail.com
+    name: Tran Phuoc Anh Quoc
+  description: Swagger API for Go Clean Architecture.
+  license:
+    name: MIT
+    url: https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Ecommerce Clean Architecture Swagger API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
