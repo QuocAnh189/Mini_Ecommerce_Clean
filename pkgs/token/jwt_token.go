@@ -35,7 +35,7 @@ func (j *JTWMarker) GenerateAccessToken(payload *AuthPayload) string {
 
 	tokenContent := jwt.MapClaims{
 		"payload": newPayload,
-		"exp":     time.Now().Add(time.Second * AccessTokenExpiredTime).Unix(),
+		"exp":     time.Now().Add(time.Second * cfg.AccessTokenDuration).Unix(),
 	}
 	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
 	token, err := jwtToken.SignedString([]byte(cfg.AuthSecret))
@@ -52,7 +52,7 @@ func (j *JTWMarker) GenerateRefreshToken(payload *AuthPayload) string {
 	newPayload := NewAuthPayload(payload.ID, payload.Email, payload.Role, time.Minute, RefreshTokenType)
 	tokenContent := jwt.MapClaims{
 		"payload": newPayload,
-		"exp":     time.Now().Add(time.Second * RefreshTokenExpiredTime).Unix(),
+		"exp":     time.Now().Add(time.Second * cfg.RefreshTokenDuration).Unix(),
 	}
 	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
 	token, err := jwtToken.SignedString([]byte(cfg.AuthSecret))
