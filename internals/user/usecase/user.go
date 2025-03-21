@@ -61,7 +61,7 @@ func (u *UserUseCase) SignIn(ctx context.Context, req *dto.SignInRequest) (strin
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return "", "", nil, errors.New("wrong message")
+		return "", "", nil, errors.New("wrong password")
 	}
 
 	tokenData := token.AuthPayload{
@@ -128,11 +128,19 @@ func (u *UserUseCase) SignOut(ctx context.Context, userID string, jit string) er
 }
 
 func (u *UserUseCase) ListUsers(ctx context.Context, req *dto.ListUserRequest) ([]*entity.User, *paging.Pagination, error) {
-	return nil, nil, nil
+	users, pagination, err := u.userRepo.ListUsers(ctx, req)
+	if err != nil {
+		return nil, nil, err
+	}
+	return users, pagination, nil
 }
 
 func (u *UserUseCase) GetUserById(ctx context.Context, userID string) (*entity.User, error) {
-	return nil, nil
+	card, err := u.userRepo.GetUserById(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return card, nil
 }
 
 func (u *UserUseCase) DeleteUser(ctx context.Context, id string) error {

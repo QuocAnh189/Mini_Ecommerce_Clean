@@ -34,14 +34,14 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 	return func(c *gin.Context) {
 		tokenValue := c.GetHeader("Authorization")
 		if tokenValue == "" {
-			c.JSON(http.StatusUnauthorized, nil)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
 			return
 		}
 
 		payload, err := a.token.ValidateToken(tokenValue)
 		if err != nil || payload == nil || payload.Type != tokenType {
-			c.JSON(http.StatusUnauthorized, nil)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()
 			return
 		}

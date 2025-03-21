@@ -2,6 +2,9 @@ package http
 
 import (
 	"ecommerce_clean/db"
+	"ecommerce_clean/internals/user/repository"
+	"ecommerce_clean/internals/user/usecase"
+	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
@@ -17,29 +20,23 @@ func Routes(
 	cache redis.IRedis,
 	token token.IMarker,
 ) {
+	userRepository := repository.NewUserRepository(sqlDB)
+	userUseCase := usecase.NewUserUseCase(validator, userRepository, minioClient, cache, token)
+	userHandler := NewAuthHandler(userUseCase)
+
+	authMiddleware := middlewares.NewAuthMiddleware(token).TokenAuth(cache)
+
 	authRouter := r.Group("/auth")
 	{
-		authRouter.POST("/signin", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "SignIn Route"})
-		})
-		authRouter.POST("/signup", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "SignUp Route"})
-		})
-		authRouter.POST("/signout", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "SignIn Route"})
-		})
+		authRouter.POST("/signup", userHandler.SignUp)
+		authRouter.POST("/signin", userHandler.SignIn)
+		authRouter.POST("/signout", authMiddleware, userHandler.SignOut)
 	}
 
-	userRouter := r.Group("/users")
+	userRouter := r.Group("/users").Use(authMiddleware)
 	{
-		userRouter.GET("", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Get Users"})
-		})
-		userRouter.GET("/:id", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Get User"})
-		})
-		userRouter.DELETE("/:id", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Delete User"})
-		})
+		userRouter.GET("", userHandler.GetUsers)
+		userRouter.GET("/:id", userHandler.GetUser)
+		userRouter.DELETE("/:id", userHandler.DeleteUser)
 	}
 }

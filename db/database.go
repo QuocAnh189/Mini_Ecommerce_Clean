@@ -117,7 +117,7 @@ func (d *Database) Delete(ctx context.Context, value any, opts ...FindOption) er
 	defer cancel()
 
 	query := d.applyOptions(opts...)
-	return query.Unscoped().Delete(value).Error
+	return query.Delete(value).Error
 }
 
 func (d *Database) FindById(ctx context.Context, id string, result any) error {

@@ -74,8 +74,8 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 	if err != nil {
 		logger.Error("Failed to sign up ", err)
 		switch err.Error() {
-		case "wrong message":
-			response.Error(c, http.StatusConflict, err, "wrong message")
+		case "wrong password":
+			response.Error(c, http.StatusConflict, err, "wrong password")
 			return
 		}
 
@@ -132,7 +132,24 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 //		@Failure	 500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
 //		@Router		 /api/v1/users [get]
 func (h *AuthHandler) GetUsers(c *gin.Context) {
-	response.JSON(c, http.StatusOK, "GetUsers successfully")
+	var req dto.ListUserRequest
+	if err := c.ShouldBind(&req); err != nil {
+		logger.Error("Failed to get query", err)
+		response.Error(c, http.StatusBadRequest, err, "Invalid parameters")
+		return
+	}
+
+	users, pagination, err := h.usecase.ListUsers(c, &req)
+	if err != nil {
+		logger.Error("Failed to get users", err)
+		response.Error(c, http.StatusInternalServerError, err, "Failed to get users")
+		return
+	}
+
+	var res dto.ListUserResponse
+	utils.MapStruct(&res.Users, users)
+	res.Pagination = pagination
+	response.JSON(c, http.StatusOK, res)
 }
 
 //		@Summary	 Get user
@@ -144,7 +161,15 @@ func (h *AuthHandler) GetUsers(c *gin.Context) {
 //		@Failure	 500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
 //		@Router		 /api/v1/users/{id} [get]
 func (h *AuthHandler) GetUser(c *gin.Context) {
-	response.JSON(c, http.StatusOK, "GetUser successfully")
+	userId := c.Param("id")
+	user, err := h.usecase.GetUserById(c, userId)
+	if err != nil {
+		logger.Error("Failed to get user detail: ", err)
+		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
+		return
+	}
+
+	response.JSON(c, http.StatusOK, user)
 }
 
 //		@Summary	 Delete user
