@@ -98,6 +98,6 @@ func (s Server) MapRoutes() error {
 	routesV1 := s.engine.Group("/api/v1")
 	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
 	productHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
-	orderHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
+	orderHttp.Routes(routesV1, s.db, s.validator, s.cache, s.tokenMarker)
 	return nil
 }

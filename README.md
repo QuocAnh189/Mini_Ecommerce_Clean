@@ -6,3 +6,6 @@
 
 ### Product-Module
 ![](docs/static/product_module.excalidraw.svg)
+
+### Order-Module
+![](docs/static/order_module.excalidraw.svg)

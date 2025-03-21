@@ -2,7 +2,10 @@ package http
 
 import (
 	"ecommerce_clean/db"
-	"ecommerce_clean/pkgs/minio"
+	"ecommerce_clean/internals/order/repository"
+	"ecommerce_clean/internals/order/usecase"
+	productRepo "ecommerce_clean/internals/product/repository"
+	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
 	"ecommerce_clean/pkgs/validation"
@@ -13,23 +16,21 @@ func Routes(
 	r *gin.RouterGroup,
 	sqlDB db.IDatabase,
 	validator validation.Validation,
-	minioClient *minio.MinioClient,
 	cache redis.IRedis,
 	token token.IMarker,
 ) {
-	orderRoute := r.Group("/orders")
+	productRepository := productRepo.NewProductRepository(sqlDB)
+	orderRepository := repository.NewOrderRepository(sqlDB)
+	orderUsecase := usecase.NewOrderUseCase(validator, orderRepository, productRepository)
+	orderHandler := NewOrderHandler(orderUsecase)
+
+	authMiddleware := middlewares.NewAuthMiddleware(token).TokenAuth(cache)
+
+	orderRoute := r.Group("/orders", authMiddleware)
 	{
-		orderRoute.POST("", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Place Order"})
-		})
-		orderRoute.GET("", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Get Orders"})
-		})
-		orderRoute.GET("/:id", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Get Order"})
-		})
-		orderRoute.PUT("/:id/cancel", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Cancel Order"})
-		})
+		orderRoute.POST("", orderHandler.PlaceOrder)
+		orderRoute.GET("", orderHandler.GetOrders)
+		orderRoute.GET("/:id", orderHandler.GetOrderByID)
+		orderRoute.PUT("/:id/:status", orderHandler.UpdateOrder)
 	}
 }
