@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/minio/minio-go/v7"
-	//"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 type MinioClient struct {
@@ -25,35 +25,29 @@ func NewMinioClient(
 	baseURL string,
 	useSSL bool,
 ) (*MinioClient, error) {
-	//client, err := minio.New(endpoint, &minio.Options{
-	//	Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-	//	Secure: useSSL,
-	//})
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//exists, err := client.BucketExists(context.Background(), bucket)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//if !exists {
-	//	err = client.MakeBucket(context.Background(), bucket, minio.MakeBucketOptions{})
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//}
+	client, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure: useSSL,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	//return &MinioClient{
-	//	Client:  client,
-	//	Bucket:  bucket,
-	//	BaseURL: baseURL,
-	//}, nil
+	exists, err := client.BucketExists(context.Background(), bucket)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		err = client.MakeBucket(context.Background(), bucket, minio.MakeBucketOptions{})
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &MinioClient{
-		Client:  nil,
-		Bucket:  "",
-		BaseURL: "",
+		Client:  client,
+		Bucket:  bucket,
+		BaseURL: baseURL,
 	}, nil
 }
 

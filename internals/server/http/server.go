@@ -21,6 +21,10 @@ import (
 
 	"ecommerce_clean/configs"
 	"ecommerce_clean/pkgs/redis"
+
+	orderHttp "ecommerce_clean/internals/order/controller/http"
+	productHttp "ecommerce_clean/internals/product/controller/http"
+	userHttp "ecommerce_clean/internals/user/controller/http"
 )
 
 type Server struct {
@@ -91,7 +95,9 @@ func (s Server) GetEngine() *gin.Engine {
 }
 
 func (s Server) MapRoutes() error {
-	//routesV1 := s.engine.Group("/api/v1")
-
+	routesV1 := s.engine.Group("/api/v1")
+	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
+	productHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
+	orderHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
 	return nil
 }

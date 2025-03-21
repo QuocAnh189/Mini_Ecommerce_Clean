@@ -6,6 +6,7 @@
 build
 tmp
 app.env
+credentials.json
 
 # Config
 app.env
@@ -17,6 +18,7 @@ app.env
 *.so
 *.dylib
 bin/
+
 
 # Test binary, built with `go test -c`
 *.test

@@ -1,0 +1,21 @@
+services:
+  ecommerce.minio:
+    image: minio/minio:latest
+    container_name: ecommerce.minio
+    ports:
+      - "9000:9000" # MinIO API
+      - "9001:9001" # MinIO Console
+    restart: unless-stopped
+    volumes:
+      - ecommerce_postgres_data:/data
+      - ecommerce_minio_config:/root/.minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    command: server /data --console-address ":9001"
+
+volumes:
+  ecommerce_postgres_data:
+    name: ecommerce_postgres_data
+  ecommerce_minio_config:
+    name: ecommerce_minio_config

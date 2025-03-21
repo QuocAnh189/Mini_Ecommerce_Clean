@@ -33,12 +33,12 @@ func main() {
 	cfg := configs.LoadConfig()
 	logger.Initialize(cfg.Environment)
 
-	db, err := db.NewDatabase(cfg.DatabaseURI)
+	database, err := db.NewDatabase(cfg.DatabaseURI)
 	if err != nil {
 		logger.Fatal("Cannot connect to database", err)
 	}
 
-	if err := db.AutoMigrate(); err != nil {
+	if err := database.AutoMigrate(); err != nil {
 		logger.Fatal("Database migration fail", err)
 	}
 
@@ -67,7 +67,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	httpSvr := httpServer.NewServer(validator, db, minioClient, cache, tokenMaker)
+	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker)
 
 	wg.Add(1)
 

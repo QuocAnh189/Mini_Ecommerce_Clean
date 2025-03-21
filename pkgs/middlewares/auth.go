@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"ecommerce_clean/pkgs/logger"
 	"encoding/json"
 	"fmt"
-	"ecommerce_clean/pkgs/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,14 +32,14 @@ func (a *AuthMiddleware) TokenRefresh(cache redis.IRedis) gin.HandlerFunc {
 
 func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		if token == "" {
+		tokenValue := c.GetHeader("Authorization")
+		if tokenValue == "" {
 			c.JSON(http.StatusUnauthorized, nil)
 			c.Abort()
 			return
 		}
 
-		payload, err := a.token.ValidateToken(token)
+		payload, err := a.token.ValidateToken(tokenValue)
 		if err != nil || payload == nil || payload.Type != tokenType {
 			c.JSON(http.StatusUnauthorized, nil)
 			c.Abort()
@@ -67,7 +67,7 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 		c.Set("userId", payload.ID)
 		c.Set("role", payload.Role)
 		c.Set("jit", payload.Jit)
-		c.Set("token", token)
+		c.Set("token", tokenValue)
 		c.Next()
 	}
 }
