@@ -42,8 +42,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "Swagger API for Go Clean Architecture.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {

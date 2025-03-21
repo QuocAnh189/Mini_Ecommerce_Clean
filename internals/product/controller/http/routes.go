@@ -2,6 +2,9 @@ package http
 
 import (
 	"ecommerce_clean/db"
+	"ecommerce_clean/internals/product/repository"
+	"ecommerce_clean/internals/product/usecase"
+	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
@@ -17,22 +20,18 @@ func Routes(
 	cache redis.IRedis,
 	token token.IMarker,
 ) {
-	productRoute := r.Group("/products")
+	productRepository := repository.NewProductRepository(sqlDB)
+	productUseCase := usecase.NewProductUseCase(validator, productRepository, minioClient)
+	productHandler := NewProductHandler(productUseCase)
+
+	authMiddleware := middlewares.NewAuthMiddleware(token).TokenAuth(cache)
+
+	productRoute := r.Group("/products").Use(authMiddleware)
 	{
-		productRoute.GET("", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Get Products"})
-		})
-		productRoute.GET("/:id", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Get Product"})
-		})
-		productRoute.POST("", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Create Product"})
-		})
-		productRoute.PUT("/:id", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Update Product"})
-		})
-		productRoute.DELETE("/:id", func(c *gin.Context) {
-			c.JSON(200, gin.H{"test": "Delete Product"})
-		})
+		productRoute.GET("", productHandler.GetProducts)
+		productRoute.GET("/:id", productHandler.GetProduct)
+		productRoute.POST("", productHandler.CreateProduct)
+		productRoute.PUT("/:id", productHandler.UpdateProduct)
+		productRoute.DELETE("/:id", productHandler.DeleteProduct)
 	}
 }

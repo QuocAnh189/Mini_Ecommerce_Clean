@@ -46,7 +46,6 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 			return
 		}
 
-		// Lấy dữ liệu từ Redis
 		var rawValue string
 		if err := cache.Get(fmt.Sprintf("blacklist:%s_%s", payload.ID, payload.Jit), &rawValue); err != nil {
 			logger.Error("Failed to get value from Redis:", err)
