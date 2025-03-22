@@ -102,7 +102,15 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 
 	if err := h.usecase.CreateProduct(c, &req); err != nil {
 		logger.Error("Failed to create product", err)
-		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
+
+		switch utils.ExtractConstraintName(err) {
+		case "unique_product_code":
+			response.Error(c, http.StatusConflict, err, "Code already in use")
+		case "unique_product_name":
+			response.Error(c, http.StatusConflict, err, "Name already in use")
+		default:
+			response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
+		}
 		return
 	}
 

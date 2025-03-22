@@ -9,9 +9,9 @@ import (
 
 type User struct {
 	ID        string         `json:"id" gorm:"unique;not null;index;primary_key"`
-	Email     string         `json:"email" gorm:"unique;not null;index;primary_key"`
-	Name      string         `json:"name" gorm:"unique;not null;index;primary_key"`
-	AvatarUrl string         `json:"avatar_url"`
+	Email     string         `json:"email" gorm:"uniqueIndex:unique_user_email;not null"`
+	Name      string         `json:"name" gorm:"uniqueIndex:unique_user_name;not null"`
+	AvatarUrl string         `json:"avatar_url" gorm:"unique:unique_user_avatar;not null"`
 	Password  string         `json:"password" gorm:"not null;"`
 	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	ProductionEnv   = "production"
+	ProductionEnv   = "production" //production or development
 	DatabaseTimeout = time.Second * 5
 )
 

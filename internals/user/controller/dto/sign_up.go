@@ -6,10 +6,10 @@ import (
 )
 
 type SignUpRequest struct {
-	Email    string                `form:"email" validate:"required,email"`
-	Name     string                `form:"name" validate:"required"`
+	Email    string                `form:"email" binding:"required,email"`
+	Name     string                `form:"name" binding:"required"`
 	Avatar   *multipart.FileHeader `form:"avatar"`
-	Password string                `form:"password" validate:"required"`
+	Password string                `form:"password" binding:"required"`
 }
 
 type SignUpResponse struct {

@@ -40,7 +40,14 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 	accessToken, refreshToken, user, err := h.usecase.SignUp(c, &req)
 	if err != nil {
 		logger.Error("Failed to sign up ", err)
-		response.Error(c, http.StatusInternalServerError, err, "Failed to sign up")
+		switch utils.ExtractConstraintName(err) {
+		case "unique_user_email":
+			response.Error(c, http.StatusConflict, err, "Email already in use")
+		case "unique_user_name":
+			response.Error(c, http.StatusConflict, err, "Name already in use")
+		default:
+			response.Error(c, http.StatusInternalServerError, err, "Failed to sign up")
+		}
 		return
 	}
 
@@ -75,11 +82,12 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		logger.Error("Failed to sign up ", err)
 		switch err.Error() {
 		case "wrong password":
-			response.Error(c, http.StatusConflict, err, "wrong password")
-			return
+			response.Error(c, http.StatusConflict, err, "Wrong password")
+		case "record not found":
+			response.Error(c, http.StatusConflict, err, "Email does not exist")
+		default:
+			response.Error(c, http.StatusInternalServerError, err, "Failed to sign up")
 		}
-
-		response.Error(c, http.StatusInternalServerError, err, "Failed to sign up")
 		return
 	}
 
