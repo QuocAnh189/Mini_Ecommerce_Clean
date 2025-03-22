@@ -68,6 +68,16 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin123
     command: server /data --console-address ":9001"
 
+  ecommerce.nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+        - ecommerce.minio
+        - ecommerce.app
+
 volumes:
   ecommerce_postgres_data:
     name: ecommerce_postgres_data
