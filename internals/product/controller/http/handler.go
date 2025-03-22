@@ -1,10 +1,12 @@
 package http
 
 import (
+	"ecommerce_clean/configs"
 	"ecommerce_clean/internals/product/controller/dto"
 	"ecommerce_clean/internals/product/entity"
 	"ecommerce_clean/internals/product/usecase"
 	"ecommerce_clean/pkgs/logger"
+	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/response"
 	"ecommerce_clean/utils"
 	"github.com/gin-gonic/gin"
@@ -13,10 +15,11 @@ import (
 
 type ProductHandler struct {
 	usecase usecase.IProductUseCase
+	cache   redis.IRedis
 }
 
-func NewProductHandler(usecase usecase.IProductUseCase) *ProductHandler {
-	return &ProductHandler{usecase: usecase}
+func NewProductHandler(usecase usecase.IProductUseCase, cache redis.IRedis) *ProductHandler {
+	return &ProductHandler{usecase: usecase, cache: cache}
 }
 
 //		@Summary	 Retrieve a list of products
@@ -34,6 +37,14 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		return
 	}
 
+	var res dto.ListProductResponse
+	cacheKey := c.Request.URL.RequestURI()
+	err := h.cache.Get(cacheKey, &res)
+	if err == nil {
+		response.JSON(c, http.StatusOK, res)
+		return
+	}
+
 	products, pagination, err := h.usecase.ListProducts(c, &req)
 	if err != nil {
 		logger.Error("Failed to get products", err)
@@ -41,10 +52,10 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		return
 	}
 
-	var res dto.ListProductResponse
 	utils.MapStruct(&res.Products, products)
 	res.Pagination = pagination
 	response.JSON(c, http.StatusOK, res)
+	_ = h.cache.SetWithExpiration(cacheKey, res, configs.ProductCachingTime)
 }
 
 //		@Summary	 Retrieve a product by its ID
@@ -60,12 +71,18 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 func (h *ProductHandler) GetProduct(c *gin.Context) {
 	var res entity.Product
 
+	cacheKey := c.Request.URL.RequestURI()
+	err := h.cache.Get(cacheKey, &res)
+	if err == nil {
+		response.JSON(c, http.StatusOK, res)
+		return
+	}
+
 	productId := c.Param("id")
 
 	product, err := h.usecase.GetProductById(c, productId)
 	if err != nil {
 		logger.Error("Failed to get product detail: ", err)
-		logger.Info(err.Error())
 		switch err.Error() {
 		case "record not found":
 			response.Error(c, http.StatusNotFound, err, err.Error())
@@ -79,6 +96,7 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 
 	utils.MapStruct(&res, product)
 	response.JSON(c, http.StatusOK, res)
+	_ = h.cache.SetWithExpiration(cacheKey, res, configs.ProductCachingTime)
 }
 
 //		@Summary	 Create a new product

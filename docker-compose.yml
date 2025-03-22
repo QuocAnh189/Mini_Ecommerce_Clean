@@ -1,4 +1,58 @@
 services:
+  ecommerce.app:
+    container_name: ecommerce.app
+    platform: linux/amd64
+    pid: "host"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ENVIRONMENT: production
+      HTTP_PORT: 8080
+      AUTH_SECRET: ######
+      DATABASE_URI: postgres://postgres:password123@ecommerce.db:5432/ecommerce_clean
+      MINIO_ENDPOINT: ecommerce.minio:9000
+      MINIO_BUCKET: ecommerce
+      MINIO_BASEURL: http://localhost:9000
+      MINIO_USESSL: false
+      REDIS_URI: ecommerce.redis:6379
+      REDIS_PASSWORD: password
+      REDIS_DB: 1
+    ports:
+      - "8002:8080"
+    depends_on:
+      - ecommerce.db
+      - ecommerce.minio
+      - ecommerce.redis
+    restart: unless-stopped
+
+  ecommerce.db:
+    image: postgres:16
+    container_name: ecommerce.db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: ecommerce_clean
+    ports:
+      - "5433:5432"
+    volumes:
+      - ecommerce_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  ecommerce.redis:
+    image: redis:latest
+    container_name: ecommerce.redis
+    restart: unless-stopped
+    ports:
+      - "6389:6379"
+    volumes:
+      - ecommerce_redis_data:/data
+    environment:
+      REDIS_PASSWORD: password
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 1
+    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "password" ]
+
   ecommerce.minio:
     image: minio/minio:latest
     container_name: ecommerce.minio
@@ -7,7 +61,7 @@ services:
       - "9001:9001" # MinIO Console
     restart: unless-stopped
     volumes:
-      - ecommerce_postgres_data:/data
+      - ecommerce_minio_data:/data
       - ecommerce_minio_config:/root/.minio
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -17,5 +71,9 @@ services:
 volumes:
   ecommerce_postgres_data:
     name: ecommerce_postgres_data
+  ecommerce_minio_data:
+    name: ecommerce_minio_data
   ecommerce_minio_config:
     name: ecommerce_minio_config
+  ecommerce_redis_data:
+    name: ecommerce_redis_data

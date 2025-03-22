@@ -22,7 +22,7 @@ func Routes(
 ) {
 	productRepository := repository.NewProductRepository(sqlDB)
 	productUseCase := usecase.NewProductUseCase(validator, productRepository, minioClient)
-	productHandler := NewProductHandler(productUseCase)
+	productHandler := NewProductHandler(productUseCase, cache)
 
 	authMiddleware := middlewares.NewAuthMiddleware(token).TokenAuth(cache)
 

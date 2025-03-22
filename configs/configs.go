@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	ProductionEnv   = "production" //production or development
-	DatabaseTimeout = time.Second * 5
+	ProductionEnv      = "production" //production or development
+	DatabaseTimeout    = time.Second * 5
+	ProductCachingTime = time.Minute * 1
 )
 
 type Config struct {
