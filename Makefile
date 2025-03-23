@@ -1,2 +1,2 @@
 swag:
-	swag init --dir ./cmd/app
+	swag init -g internals/server/http/server.go

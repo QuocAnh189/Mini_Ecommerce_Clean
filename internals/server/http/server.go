@@ -94,6 +94,22 @@ func (s Server) GetEngine() *gin.Engine {
 	return s.engine
 }
 
+//	@title			Ecommerce Clean Architecture Swagger API
+//	@version		1.0
+// @host        	localhost:8080
+// @BasePath    	/api/v1
+//	@description	Swagger API for Go Clean Architecture.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	Tran Phuoc Anh Quoc
+//	@contact.email	anhquoc18092003@gmail.com
+
+//	@license.name	MIT
+//	@license.url	https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
+
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
 func (s Server) MapRoutes() error {
 	routesV1 := s.engine.Group("/api/v1")
 	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)

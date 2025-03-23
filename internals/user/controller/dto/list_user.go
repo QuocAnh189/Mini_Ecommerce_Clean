@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"ecommerce_clean/internals/user/entity"
 	"ecommerce_clean/pkgs/paging"
 )
 
@@ -14,6 +13,6 @@ type ListUserRequest struct {
 	TakeAll   bool   `json:"-" form:"take_all"`
 }
 type ListUserResponse struct {
-	Users      []*entity.User     `json:"items"`
+	Users      []*User            `json:"items"`
 	Pagination *paging.Pagination `json:"metadata"`
 }

@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"ecommerce_clean/internals/order/entity"
 	"ecommerce_clean/pkgs/paging"
 )
 
@@ -16,6 +15,6 @@ type ListOrdersRequest struct {
 }
 
 type ListOrdersResponse struct {
-	Orders     []*entity.Order    `json:"orders,omitempty"`
+	Orders     []*Order           `json:"orders,omitempty"`
 	Pagination *paging.Pagination `json:"pagination,omitempty"`
 }

@@ -1,3 +1,144 @@
+basePath: /api/v1
+definitions:
+  dto.ListOrdersResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/dto.Order'
+        type: array
+      pagination:
+        $ref: '#/definitions/paging.Pagination'
+    type: object
+  dto.Order:
+    properties:
+      code:
+        type: string
+      id:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/dto.OrderLine'
+        type: array
+      status:
+        type: string
+      total_price:
+        type: number
+    type: object
+  dto.OrderLine:
+    properties:
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/internals_order_controller_dto.Product'
+      quantity:
+        type: integer
+    type: object
+  dto.PlaceOrderLineRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dto.PlaceOrderRequest:
+    properties:
+      lines:
+        items:
+          $ref: '#/definitions/dto.PlaceOrderLineRequest'
+        maxItems: 5
+        type: array
+      user_id:
+        type: string
+    required:
+    - lines
+    - user_id
+    type: object
+  dto.SignInRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.SignInResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      user:
+        $ref: '#/definitions/dto.User'
+    required:
+    - accessToken
+    - refreshToken
+    - user
+    type: object
+  dto.SignUpResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      user:
+        $ref: '#/definitions/dto.User'
+    required:
+    - accessToken
+    - refreshToken
+    - user
+    type: object
+  dto.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internals_order_controller_dto.Product:
+    properties:
+      code:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  paging.Pagination:
+    properties:
+      has_next:
+        type: boolean
+      has_previous:
+        type: boolean
+      page:
+        type: integer
+      size:
+        type: integer
+      skip:
+        type: integer
+      take_all:
+        type: boolean
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      error: {}
+    type: object
+host: localhost:8080
 info:
   contact:
     email: anhquoc18092003@gmail.com
@@ -9,7 +150,643 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Ecommerce Clean Architecture Swagger API
   version: "1.0"
-paths: {}
+paths:
+  /api/v1/auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates the user based on the provided credentials and returns
+        access tokens and user info if successful.
+      parameters:
+      - description: User sign-in request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully signed in
+          schema:
+            $ref: '#/definitions/dto.SignInResponse'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "409":
+          description: Conflict - Wrong password or Email does not exist
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - Failed to sign in
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Sign-In
+      tags:
+      - Auth
+  /api/v1/auth/signout:
+    post:
+      description: Logs out the authenticated user by invalidating the current session
+        token.
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully logged out
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Missing Authorization header
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - Invalid or missing user ID
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - Failed to sign out
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Sign-Out
+      tags:
+      - Auth
+  /api/v1/auth/signup:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Registers a new user with the provided details and returns access
+        tokens along with user info if successful.
+      parameters:
+      - description: User email (must be unique)
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: User name (must be unique)
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: User password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: User avatar file
+        in: formData
+        name: avatar
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully registered
+          schema:
+            $ref: '#/definitions/dto.SignUpResponse'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "409":
+          description: Conflict - Email or Name already in use
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - Failed to sign up
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Sign-Up
+      tags:
+      - Auth
+  /api/v1/orders:
+    get:
+      description: Retrieve a list of orders for the authenticated user with optional
+        filters.
+      parameters:
+      - description: Filter by order code
+        in: query
+        name: code
+        type: string
+      - description: Filter by order status
+        in: query
+        name: status
+        type: string
+      - description: 'Page number for pagination (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of records per page (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      - description: Field to order by (e.g., created_at)
+        in: query
+        name: order_by
+        type: string
+      - description: 'Sort order: true for descending, false for ascending'
+        in: query
+        name: order_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.ListOrdersResponse'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get my orders
+      tags:
+      - Orders
+    post:
+      description: Creates a new order for the authenticated user.
+      parameters:
+      - description: Order details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PlaceOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order placed successfully
+          schema:
+            $ref: '#/definitions/dto.Order'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Place a new order
+      tags:
+      - Orders
+  /api/v1/orders/{id}:
+    get:
+      description: Retrieve details of a specific order by its ID.
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.Order'
+        "400":
+          description: Bad Request - Missing or invalid Order ID
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Order does not exist
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get order details
+      tags:
+      - Orders
+  /api/v1/orders/{id}/{status}:
+    put:
+      description: Update the status of an existing order.
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New order status
+        in: path
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order updated successfully
+          schema:
+            $ref: '#/definitions/dto.Order'
+        "400":
+          description: Bad Request - Missing or invalid Order ID
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Order does not exist
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update order status
+      tags:
+      - Orders
+  /api/v1/products:
+    get:
+      description: Fetches a paginated list of products based on the provided filter
+        parameters.
+      parameters:
+      - description: Search keyword for products
+        in: query
+        name: search
+        type: string
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Number of items per page (default: 10)'
+        in: query
+        name: size
+        type: integer
+      - description: Field to sort by
+        in: query
+        name: order_by
+        type: string
+      - description: Sort in descending order (true/false)
+        in: query
+        name: order_desc
+        type: boolean
+      - description: Retrieve all products without pagination
+        in: query
+        name: take_all
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of products
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid query parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a list of products
+      tags:
+      - Products
+    post:
+      consumes:
+      - multipart/form-data
+      description: Creates a new product based on the provided details.
+      parameters:
+      - description: Product Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Product Description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Product Image
+        in: formData
+        name: image
+        required: true
+        type: file
+      - description: Product Price (must be greater than 0)
+        in: formData
+        name: price
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Product created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "409":
+          description: Conflict - Code or Name already in use
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new product
+      tags:
+      - Products
+  /api/v1/products/{id}:
+    delete:
+      description: Deletes an existing product by its ID.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product deleted successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Product with the specified ID not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete a product
+      tags:
+      - Products
+    get:
+      description: Fetches the details of a specific product based on the provided
+        product ID.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the product
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid product ID
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Product with the specified ID not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a product by its ID
+      tags:
+      - Products
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing product based on the provided details.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Name
+        in: formData
+        name: name
+        type: string
+      - description: Product Description
+        in: formData
+        name: description
+        type: string
+      - description: Product Image
+        in: formData
+        name: image
+        type: file
+      - description: Product Price (must be greater than or equal to 0)
+        in: formData
+        name: price
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User not authenticated
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Product with the specified ID not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update a product
+      tags:
+      - Products
+  /api/v1/users:
+    get:
+      description: Retrieves a paginated list of users based on search criteria.
+      parameters:
+      - description: Search keyword for filtering users
+        in: query
+        name: search
+        type: string
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of users per page
+        in: query
+        name: size
+        type: integer
+      - description: Column name to sort by
+        in: query
+        name: order_by
+        type: string
+      - description: Sort in descending order (true/false)
+        in: query
+        name: order_desc
+        type: boolean
+      - description: Retrieve all users without pagination
+        in: query
+        name: take_all
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved users list
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid query parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - Failed to get users
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Users List
+      tags:
+      - Users
+  /api/v1/users/{id}:
+    delete:
+      description: Deletes a user from the database by ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully deleted
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid user ID format
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - User does not exist
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - Failed to delete user
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete User
+      tags:
+      - Users
+    get:
+      description: Retrieves detailed information of a specific user by ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved user details
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request - Invalid user ID format
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - User does not exist
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - Failed to retrieve user details
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get User Detail
+      tags:
+      - Users
 securityDefinitions:
   ApiKeyAuth:
     in: header
