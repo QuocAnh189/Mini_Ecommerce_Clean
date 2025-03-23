@@ -92,8 +92,8 @@ Defines how the application is built and run inside a Docker container.
 
 ## How to run application
 1. Clone the repo and cd into it
-2. Run `docer-compose up --build -d` local dev environment
-3. Set mode `LF` (not `CRLF`) for entrypoint.sh file  
+2. Set mode `LF` (not `CRLF`) for entrypoint.sh file  
+3. Run `docker-compose up --build -d` local dev environment
 4. Setup minio container.
 - Run `docker exect -it <container_id of ecommerce.minio> sh`.
 - Run `mc alias set myminio http://ecommerce.minio:9000 minioadmin minioadmin123`.
