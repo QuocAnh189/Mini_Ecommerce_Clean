@@ -1,17 +1,13 @@
 package http
 
 import (
+	_ "ecommerce_clean/docs"
 	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/token"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"time"
-
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
-	_ "ecommerce_clean/docs"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -63,24 +59,16 @@ func (s Server) Run() error {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	//s.engine.Use(cors.Default())
-	s.engine.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "access-control-allow-origin", "access-control-allow-headers"},
-		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+	s.engine.Use(middlewares.PrometheusMiddleware())
+	s.engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	s.engine.Use(middlewares.CorsMiddleware())
 
 	if err := s.MapRoutes(); err != nil {
 		logger.Fatalf("MapRoutes Error: %v", err)
 	}
 
 	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	s.engine.Use(middlewares.PrometheusMiddleware())
-	s.engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	s.engine.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Welcome to Ecommerce Clean Architecture"})

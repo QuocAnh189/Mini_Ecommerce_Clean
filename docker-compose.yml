@@ -19,7 +19,7 @@ services:
       REDIS_PASSWORD: password
       REDIS_DB: 1
     ports:
-      - "8002:8080"
+      - "8080:8080"
     depends_on:
       - ecommerce.db
       - ecommerce.minio
@@ -88,6 +88,19 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - ecommerce.app
+
+  ecommerce.grafana:
+    image: grafana/grafana:latest
+    container_name: ecommerce.grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - ecommerce.prometheus
 
 volumes:
   ecommerce_postgres_data:
