@@ -1,9 +1,11 @@
 package http
 
 import (
+	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/token"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -76,6 +78,9 @@ func (s Server) Run() error {
 	}
 
 	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	s.engine.Use(middlewares.PrometheusMiddleware())
+	s.engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	s.engine.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Welcome to Ecommerce Clean Architecture"})
