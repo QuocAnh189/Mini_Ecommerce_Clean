@@ -5,8 +5,10 @@
 # Build
 build
 tmp
+grafana
 app.env
 credentials.json
+
 
 # Config
 app.env

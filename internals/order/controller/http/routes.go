@@ -24,7 +24,7 @@ func Routes(
 	orderUsecase := usecase.NewOrderUseCase(validator, orderRepository, productRepository)
 	orderHandler := NewOrderHandler(orderUsecase)
 
-	authMiddleware := middlewares.NewAuthMiddleware(token).TokenAuth(cache)
+	authMiddleware := middlewares.NewAuthMiddleware(token, cache).TokenAuth()
 
 	orderRoute := r.Group("/orders", authMiddleware)
 	{

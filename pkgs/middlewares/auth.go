@@ -14,20 +14,22 @@ import (
 
 type AuthMiddleware struct {
 	token token.IMarker
+	cache redis.IRedis
 }
 
-func NewAuthMiddleware(token token.IMarker) *AuthMiddleware {
+func NewAuthMiddleware(token token.IMarker, cache redis.IRedis) *AuthMiddleware {
 	return &AuthMiddleware{
 		token: token,
+		cache: cache,
 	}
 }
 
-func (a *AuthMiddleware) TokenAuth(cache redis.IRedis) gin.HandlerFunc {
-	return a.Token(token.AccessTokenType, cache)
+func (a *AuthMiddleware) TokenAuth() gin.HandlerFunc {
+	return a.Token(token.AccessTokenType, a.cache)
 }
 
-func (a *AuthMiddleware) TokenRefresh(cache redis.IRedis) gin.HandlerFunc {
-	return a.Token(token.RefreshTokenType, cache)
+func (a *AuthMiddleware) TokenRefresh() gin.HandlerFunc {
+	return a.Token(token.RefreshTokenType, a.cache)
 }
 
 func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.HandlerFunc {

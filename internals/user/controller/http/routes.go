@@ -24,7 +24,7 @@ func Routes(
 	userUseCase := usecase.NewUserUseCase(validator, userRepository, minioClient, cache, token)
 	userHandler := NewAuthHandler(userUseCase)
 
-	authMiddleware := middlewares.NewAuthMiddleware(token).TokenAuth(cache)
+	authMiddleware := middlewares.NewAuthMiddleware(token, cache).TokenAuth()
 
 	authRouter := r.Group("/auth")
 	{
