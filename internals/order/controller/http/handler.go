@@ -32,7 +32,8 @@ func NewOrderHandler(usecase usecase.IOrderUseCase) *OrderHandler {
 //	@Failure		401	{object}	response.Response	"Unauthorized - User not authenticated"
 //	@Failure		403	{object}	response.Response	"Forbidden - User does not have the required permissions"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/orders [post]
+//	@Router			/orders [post]
+//	@Security		ApiKeyAuth
 func (a *OrderHandler) PlaceOrder(c *gin.Context) {
 	var req dto.PlaceOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -74,7 +75,8 @@ func (a *OrderHandler) PlaceOrder(c *gin.Context) {
 //	@Failure		400	{object}	response.Response		"Bad Request - Invalid parameters"
 //	@Failure		401	{object}	response.Response		"Unauthorized - User not authenticated"
 //	@Failure		500	{object}	response.Response		"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/orders [get]
+//	@Router			/orders [get]
+//	@Security		ApiKeyAuth
 func (a *OrderHandler) GetOrders(c *gin.Context) {
 	var req dto.ListOrdersRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
@@ -113,7 +115,8 @@ func (a *OrderHandler) GetOrders(c *gin.Context) {
 //	@Failure		401	{object}	response.Response	"Unauthorized - User not authenticated"
 //	@Failure		404	{object}	response.Response	"Not Found - Order does not exist"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/orders/{id} [get]
+//	@Router			/orders/{id} [get]
+//	@Security		ApiKeyAuth
 func (a *OrderHandler) GetOrderByID(c *gin.Context) {
 	userId := c.GetString("userId")
 	if userId == "" {
@@ -151,7 +154,8 @@ func (a *OrderHandler) GetOrderByID(c *gin.Context) {
 //	@Failure		401	{object}	response.Response	"Unauthorized - User not authenticated"
 //	@Failure		404	{object}	response.Response	"Not Found - Order does not exist"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/orders/{id}/{status} [put]
+//	@Router			/orders/{id}/{status} [put]
+//	@Security		ApiKeyAuth
 func (a *OrderHandler) UpdateOrder(c *gin.Context) {
 	userID := c.GetString("userId")
 	if userID == "" {

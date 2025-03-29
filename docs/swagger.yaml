@@ -1,5 +1,39 @@
 basePath: /api/v1
 definitions:
+  dto.AddProductRequest:
+    properties:
+      cart_id:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - cart_id
+    - product_id
+    - quantity
+    type: object
+  dto.Cart:
+    properties:
+      id:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/dto.CartLineRequest'
+        type: array
+      user:
+        $ref: '#/definitions/internals_cart_controller_dto.User'
+    type: object
+  dto.CartLineRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
   dto.ListOrdersResponse:
     properties:
       orders:
@@ -56,6 +90,16 @@ definitions:
     - lines
     - user_id
     type: object
+  dto.RemoveProductRequest:
+    properties:
+      cart_id:
+        type: string
+      product_id:
+        type: string
+    required:
+    - cart_id
+    - product_id
+    type: object
   dto.SignInRequest:
     properties:
       email:
@@ -73,7 +117,7 @@ definitions:
       refreshToken:
         type: string
       user:
-        $ref: '#/definitions/dto.User'
+        $ref: '#/definitions/internals_user_controller_dto.User'
     required:
     - accessToken
     - refreshToken
@@ -86,21 +130,17 @@ definitions:
       refreshToken:
         type: string
       user:
-        $ref: '#/definitions/dto.User'
+        $ref: '#/definitions/internals_user_controller_dto.User'
     required:
     - accessToken
     - refreshToken
     - user
     type: object
-  dto.User:
+  internals_cart_controller_dto.User:
     properties:
-      created_at:
-        type: string
       email:
         type: string
       id:
-        type: string
-      updated_at:
         type: string
     type: object
   internals_order_controller_dto.Product:
@@ -113,6 +153,17 @@ definitions:
         type: string
       price:
         type: number
+    type: object
+  internals_user_controller_dto.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
     type: object
   paging.Pagination:
     properties:
@@ -151,7 +202,7 @@ info:
   title: Ecommerce Clean Architecture Swagger API
   version: "1.0"
 paths:
-  /api/v1/auth/signin:
+  /auth/signin:
     post:
       consumes:
       - application/json
@@ -186,16 +237,10 @@ paths:
       summary: User Sign-In
       tags:
       - Auth
-  /api/v1/auth/signout:
+  /auth/signout:
     post:
       description: Logs out the authenticated user by invalidating the current session
         token.
-      parameters:
-      - description: Bearer access token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -215,10 +260,12 @@ paths:
           description: Internal Server Error - Failed to sign out
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: User Sign-Out
       tags:
       - Auth
-  /api/v1/auth/signup:
+  /auth/signup:
     post:
       consumes:
       - multipart/form-data
@@ -266,7 +313,142 @@ paths:
       summary: User Sign-Up
       tags:
       - Auth
-  /api/v1/orders:
+  /carts/{userID}:
+    get:
+      description: Fetches the shopping cart details of the authenticated user based
+        on the provided user ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user's cart
+          schema:
+            $ref: '#/definitions/dto.Cart'
+        "400":
+          description: Bad Request - Invalid request parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User ID mismatch or authentication failed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Cart not found for the given user ID
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve the cart of a user
+      tags:
+      - Carts
+  /carts/{userID}/products:
+    delete:
+      consumes:
+      - application/json
+      description: Removes a specified product from the authenticated user's shopping
+        cart.
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Product details to remove from cart
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RemoveProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Remove product from cart successfully
+          schema:
+            type: string
+        "400":
+          description: Bad Request - Invalid request parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User ID mismatch or authentication failed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Remove a product from the user's cart
+      tags:
+      - Carts
+    post:
+      consumes:
+      - application/json
+      description: Adds a specified product to the authenticated user's shopping cart.
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Product details to add to cart
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Add product to cart successfully
+          schema:
+            type: string
+        "400":
+          description: Bad Request - Invalid request parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User ID mismatch or authentication failed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Add a product to the user's cart
+      tags:
+      - Carts
+  /orders:
     get:
       description: Retrieve a list of orders for the authenticated user with optional
         filters.
@@ -317,6 +499,7 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Get my orders
       tags:
       - Orders
@@ -355,10 +538,11 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Place a new order
       tags:
       - Orders
-  /api/v1/orders/{id}:
+  /orders/{id}:
     get:
       description: Retrieve details of a specific order by its ID.
       parameters:
@@ -393,10 +577,11 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Get order details
       tags:
       - Orders
-  /api/v1/orders/{id}/{status}:
+  /orders/{id}/{status}:
     put:
       description: Update the status of an existing order.
       parameters:
@@ -436,10 +621,11 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Update order status
       tags:
       - Orders
-  /api/v1/products:
+  /products:
     get:
       description: Fetches a paginated list of products based on the provided filter
         parameters.
@@ -484,6 +670,8 @@ paths:
             the request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Retrieve a list of products
       tags:
       - Products
@@ -540,10 +728,12 @@ paths:
             the request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Create a new product
       tags:
       - Products
-  /api/v1/products/{id}:
+  /products/{id}:
     delete:
       description: Deletes an existing product by its ID.
       parameters:
@@ -580,6 +770,8 @@ paths:
             the request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Delete a product
       tags:
       - Products
@@ -620,6 +812,8 @@ paths:
             the request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Retrieve a product by its ID
       tags:
       - Products
@@ -677,10 +871,12 @@ paths:
             the request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Update a product
       tags:
       - Products
-  /api/v1/users:
+  /users:
     get:
       description: Retrieves a paginated list of users based on search criteria.
       parameters:
@@ -723,10 +919,12 @@ paths:
           description: Internal Server Error - Failed to get users
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Get Users List
       tags:
       - Users
-  /api/v1/users/{id}:
+  /users/{id}:
     delete:
       description: Deletes a user from the database by ID.
       parameters:
@@ -754,6 +952,8 @@ paths:
           description: Internal Server Error - Failed to delete user
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Delete User
       tags:
       - Users
@@ -784,6 +984,8 @@ paths:
           description: Internal Server Error - Failed to retrieve user details
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Get User Detail
       tags:
       - Users

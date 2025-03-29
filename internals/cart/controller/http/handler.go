@@ -21,6 +21,19 @@ func NewCartHandler(usecase usecase.ICartUseCase) *CartHandler {
 	}
 }
 
+//	@Summary		Retrieve the cart of a user
+//	@Description	Fetches the shopping cart details of the authenticated user based on the provided user ID.
+//	@Tags			Carts
+//	@Produce		json
+//	@Param			userID	path	string	true	"User ID"
+//	@Success		200	{object}	dto.Cart	"Successfully retrieved the user's cart"
+//	@Failure		400	{object}	response.Response	"Bad Request - Invalid request parameters"
+//	@Failure		401	{object}	response.Response	"Unauthorized - User ID mismatch or authentication failed"
+//	@Failure		403	{object}	response.Response	"Forbidden - User does not have the required permissions"
+//	@Failure		404	{object}	response.Response	"Not Found - Cart not found for the given user ID"
+//	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
+//	@Router			/carts/{userID} [get]
+//	@Security		ApiKeyAuth
 func (h *CartHandler) GetCart(c *gin.Context) {
 	userID := c.GetString("userId")
 	userIDParam := c.Param("userID")
@@ -41,6 +54,20 @@ func (h *CartHandler) GetCart(c *gin.Context) {
 	response.JSON(c, http.StatusOK, res)
 }
 
+//	@Summary		Add a product to the user's cart
+//	@Description	Adds a specified product to the authenticated user's shopping cart.
+//	@Tags			Carts
+//	@Accept			json
+//	@Produce		json
+//	@Param			userID		path	string					true	"User ID"
+//	@Param			body		body	dto.AddProductRequest	true	"Product details to add to cart"
+//	@Success		201			{string}	string				"Add product to cart successfully"
+//	@Failure		400			{object}	response.Response	"Bad Request - Invalid request parameters"
+//	@Failure		401			{object}	response.Response	"Unauthorized - User ID mismatch or authentication failed"
+//	@Failure		403			{object}	response.Response	"Forbidden - User does not have the required permissions"
+//	@Failure		500			{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
+//	@Router			/carts/{userID}/products [post]
+//	@Security		ApiKeyAuth
 func (h *CartHandler) AddProductToCart(c *gin.Context) {
 	userID := c.GetString("userId")
 	userIDParam := c.Param("userID")
@@ -65,6 +92,20 @@ func (h *CartHandler) AddProductToCart(c *gin.Context) {
 	response.JSON(c, http.StatusCreated, "Add product to cart successfully")
 }
 
+//	@Summary		Remove a product from the user's cart
+//	@Description	Removes a specified product from the authenticated user's shopping cart.
+//	@Tags			Carts
+//	@Accept			json
+//	@Produce		json
+//	@Param			userID		path	string						true	"User ID"
+//	@Param			body		body	dto.RemoveProductRequest	true	"Product details to remove from cart"
+//	@Success		200			{string}	string					"Remove product from cart successfully"
+//	@Failure		400			{object}	response.Response		"Bad Request - Invalid request parameters"
+//	@Failure		401			{object}	response.Response		"Unauthorized - User ID mismatch or authentication failed"
+//	@Failure		403			{object}	response.Response		"Forbidden - User does not have the required permissions"
+//	@Failure		500			{object}	response.Response		"Internal Server Error - An error occurred while processing the request"
+//	@Router			/carts/{userID}/products [delete]
+//	@Security		ApiKeyAuth
 func (h *CartHandler) RemoveProductToCart(c *gin.Context) {
 	userID := c.GetString("userId")
 	userIDParam := c.Param("userID")

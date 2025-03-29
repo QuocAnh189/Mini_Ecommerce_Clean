@@ -23,7 +23,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/auth/signin": {
+        "/auth/signin": {
             "post": {
                 "description": "Authenticates the user based on the provided credentials and returns access tokens and user info if successful.",
                 "consumes": [
@@ -75,8 +75,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/signout": {
+        "/auth/signout": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Logs out the authenticated user by invalidating the current session token.",
                 "produces": [
                     "application/json"
@@ -85,15 +90,6 @@ const docTemplate = `{
                     "Auth"
                 ],
                 "summary": "User Sign-Out",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer access token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "User successfully logged out",
@@ -122,7 +118,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/signup": {
+        "/auth/signup": {
             "post": {
                 "description": "Registers a new user with the provided details and returns access tokens along with user info if successful.",
                 "consumes": [
@@ -192,9 +188,214 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/orders": {
+        "/carts/{userID}": {
             "get": {
                 "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Fetches the shopping cart details of the authenticated user based on the provided user ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carts"
+                ],
+                "summary": "Retrieve the cart of a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the user's cart",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Cart"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User ID mismatch or authentication failed",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User does not have the required permissions",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - Cart not found for the given user ID",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - An error occurred while processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/carts/{userID}/products": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Adds a specified product to the authenticated user's shopping cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carts"
+                ],
+                "summary": "Add a product to the user's cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Product details to add to cart",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Add product to cart successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User ID mismatch or authentication failed",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User does not have the required permissions",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - An error occurred while processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Removes a specified product from the authenticated user's shopping cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carts"
+                ],
+                "summary": "Remove a product from the user's cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Product details to remove from cart",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RemoveProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Remove product from cart successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User ID mismatch or authentication failed",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User does not have the required permissions",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - An error occurred while processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
                     {
                         "ApiKeyAuth": []
                     }
@@ -276,6 +477,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "ApiKeyAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Creates a new order for the authenticated user.",
@@ -331,9 +535,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/orders/{id}": {
+        "/orders/{id}": {
             "get": {
                 "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
                     {
                         "ApiKeyAuth": []
                     }
@@ -389,9 +596,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/orders/{id}/{status}": {
+        "/orders/{id}/{status}": {
             "put": {
                 "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
                     {
                         "ApiKeyAuth": []
                     }
@@ -454,8 +664,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/products": {
+        "/products": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetches a paginated list of products based on the provided filter parameters.",
                 "produces": [
                     "application/json"
@@ -524,6 +739,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Creates a new product based on the provided details.",
                 "consumes": [
                     "multipart/form-data"
@@ -605,8 +825,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/products/{id}": {
+        "/products/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetches the details of a specific product based on the provided product ID.",
                 "produces": [
                     "application/json"
@@ -664,6 +889,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update an existing product based on the provided details.",
                 "consumes": [
                     "multipart/form-data"
@@ -748,6 +978,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an existing product by its ID.",
                 "produces": [
                     "application/json"
@@ -805,8 +1040,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users": {
+        "/users": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieves a paginated list of users based on search criteria.",
                 "produces": [
                     "application/json"
@@ -875,8 +1115,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{id}": {
+        "/users/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieves detailed information of a specific user by ID.",
                 "produces": [
                     "application/json"
@@ -922,6 +1167,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes a user from the database by ID.",
                 "produces": [
                     "application/json"
@@ -969,6 +1219,57 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AddProductRequest": {
+            "type": "object",
+            "required": [
+                "cart_id",
+                "product_id",
+                "quantity"
+            ],
+            "properties": {
+                "cart_id": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.Cart": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "lines": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CartLineRequest"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/internals_cart_controller_dto.User"
+                }
+            }
+        },
+        "dto.CartLineRequest": {
+            "type": "object",
+            "required": [
+                "product_id",
+                "quantity"
+            ],
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.ListOrdersResponse": {
             "type": "object",
             "properties": {
@@ -1054,6 +1355,21 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.RemoveProductRequest": {
+            "type": "object",
+            "required": [
+                "cart_id",
+                "product_id"
+            ],
+            "properties": {
+                "cart_id": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.SignInRequest": {
             "type": "object",
             "required": [
@@ -1084,7 +1400,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.User"
+                    "$ref": "#/definitions/internals_user_controller_dto.User"
                 }
             }
         },
@@ -1103,23 +1419,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.User"
+                    "$ref": "#/definitions/internals_user_controller_dto.User"
                 }
             }
         },
-        "dto.User": {
+        "internals_cart_controller_dto.User": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
@@ -1138,6 +1448,23 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                }
+            }
+        },
+        "internals_user_controller_dto.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },

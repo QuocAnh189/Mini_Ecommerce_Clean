@@ -33,7 +33,7 @@ func NewAuthHandler(usecase usecase.IUserUseCase) *AuthHandler {
 //	@Failure		400			{object}	response.Response		"Bad Request - Invalid parameters"
 //	@Failure		409			{object}	response.Response		"Conflict - Email or Name already in use"
 //	@Failure		500			{object}	response.Response		"Internal Server Error - Failed to sign up"
-//	@Router			/api/v1/auth/signup [post]
+//	@Router			/auth/signup [post]
 func (h *AuthHandler) SignUp(c *gin.Context) {
 	var req dto.SignUpRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -74,7 +74,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 //	@Failure		400		{object}	response.Response	"Bad Request - Invalid parameters"
 //	@Failure		409		{object}	response.Response	"Conflict - Wrong password or Email does not exist"
 //	@Failure		500		{object}	response.Response	"Internal Server Error - Failed to sign in"
-//	@Router			/api/v1/auth/signin [post]
+//	@Router			/auth/signin [post]
 func (h *AuthHandler) SignIn(c *gin.Context) {
 	var req dto.SignInRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -108,12 +108,12 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 //	@Description	Logs out the authenticated user by invalidating the current session token.
 //	@Tags			Auth
 //	@Produce		json
-//	@Param			Authorization	header		string	true	"Bearer access token"
 //	@Success		200				{object}	response.Response	"User successfully logged out"
 //	@Failure		400				{object}	response.Response	"Bad Request - Missing Authorization header"
 //	@Failure		401				{object}	response.Response	"Unauthorized - Invalid or missing user ID"
 //	@Failure		500				{object}	response.Response	"Internal Server Error - Failed to sign out"
-//	@Router			/api/v1/auth/signout [post]
+//	@Router			/auth/signout [post]
+//	@Security		ApiKeyAuth
 func (h *AuthHandler) SignOut(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	if token == "" {
@@ -152,7 +152,8 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 //	@Success		200			{object}	response.Response	"Successfully retrieved users list"
 //	@Failure		400			{object}	response.Response	"Bad Request - Invalid query parameters"
 //	@Failure		500			{object}	response.Response	"Internal Server Error - Failed to get users"
-//	@Router			/api/v1/users [get]
+//	@Router			/users [get]
+//	@Security		ApiKeyAuth
 func (h *AuthHandler) GetUsers(c *gin.Context) {
 	var req dto.ListUserRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -183,7 +184,8 @@ func (h *AuthHandler) GetUsers(c *gin.Context) {
 //	@Failure		400		{object}	response.Response	"Bad Request - Invalid user ID format"
 //	@Failure		404		{object}	response.Response	"Not Found - User does not exist"
 //	@Failure		500		{object}	response.Response	"Internal Server Error - Failed to retrieve user details"
-//	@Router			/api/v1/users/{id} [get]
+//	@Router			/users/{id} [get]
+//	@Security		ApiKeyAuth
 func (h *AuthHandler) GetUser(c *gin.Context) {
 	userId := c.Param("id")
 	user, err := h.usecase.GetUserById(c, userId)
@@ -205,7 +207,8 @@ func (h *AuthHandler) GetUser(c *gin.Context) {
 //	@Failure		400		{object}	response.Response	"Bad Request - Invalid user ID format"
 //	@Failure		404		{object}	response.Response	"Not Found - User does not exist"
 //	@Failure		500		{object}	response.Response	"Internal Server Error - Failed to delete user"
-//	@Router			/api/v1/users/{id} [delete]
+//	@Router			/users/{id} [delete]
+//	@Security		ApiKeyAuth
 func (h *AuthHandler) DeleteUser(c *gin.Context) {
 	userId := c.Param("id")
 

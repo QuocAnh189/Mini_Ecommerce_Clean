@@ -35,7 +35,8 @@ func NewProductHandler(usecase usecase.IProductUseCase, cache redis.IRedis) *Pro
 //	@Success		200			{object}	response.Response	"Successfully retrieved the list of products"
 //	@Failure		400			{object}	response.Response	"Bad Request - Invalid query parameters"
 //	@Failure		500			{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/products [get]
+//	@Router			/products [get]
+//	@Security		ApiKeyAuth
 func (h *ProductHandler) GetProducts(c *gin.Context) {
 	var req dto.ListProductRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -76,7 +77,8 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 //	@Failure		403	{object}	response.Response	"Forbidden - User does not have the required permissions"
 //	@Failure		404	{object}	response.Response	"Not Found - Product with the specified ID not found"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/products/{id} [get]
+//	@Router			/products/{id} [get]
+//	@Security		ApiKeyAuth
 func (h *ProductHandler) GetProduct(c *gin.Context) {
 	var res entity.Product
 
@@ -123,7 +125,8 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 //	@Failure		403	{object}	response.Response	"Forbidden - User does not have the required permissions"
 //	@Failure		409	{object}	response.Response	"Conflict - Code or Name already in use"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/products [post]
+//	@Router			/products [post]
+//	@Security		ApiKeyAuth
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	var req dto.CreateProductRequest
 
@@ -166,7 +169,8 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 //	@Failure		403	{object}	response.Response	"Forbidden - User does not have the required permissions"
 //	@Failure		404	{object}	response.Response	"Not Found - Product with the specified ID not found"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/products/{id} [put]
+//	@Router			/products/{id} [put]
+//	@Security		ApiKeyAuth
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	var req dto.UpdateProductRequest
 
@@ -198,7 +202,8 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 //	@Failure		403	{object}	response.Response	"Forbidden - User does not have the required permissions"
 //	@Failure		404	{object}	response.Response	"Not Found - Product with the specified ID not found"
 //	@Failure		500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
-//	@Router			/api/v1/products/{id} [delete]
+//	@Router			/products/{id} [delete]
+//	@Security		ApiKeyAuth
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	productId := c.Param("id")
 
