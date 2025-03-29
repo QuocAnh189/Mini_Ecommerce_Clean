@@ -15,7 +15,10 @@ Using the principles of Robert Martin (aka Uncle Bob).
 ## Clean Architecture
 ![Clean](docs/static/clean.excalidraw.svg)
 
-## Diagrams
+## Database
+![Database](docs/static/database.png)
+
+## Clean Module
 ### User_Module
 ![UserModel](docs/static/user_module.excalidraw.svg)
 
@@ -24,6 +27,9 @@ Using the principles of Robert Martin (aka Uncle Bob).
 
 ### Order_Module
 ![OrderModule](docs/static/order_module.excalidraw.svg)
+
+### Cart_Module
+![OrderModule](docs/static/cart_module.excalidraw.svg)
 
 ## Tech Stack
 ![TechStack](docs/static/techstack.excalidraw.svg)
@@ -90,7 +96,7 @@ Dockerfile
 
 Defines how the application is built and run inside a Docker container.
 
-## How to run application
+## How to run application (Docker)
 1. Clone the repo and cd into it
 2. Set mode `LF` (not `CRLF`) for entrypoint.sh file  
 3. Run `docker-compose up --build -d` local dev environment
