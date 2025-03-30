@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './layouts'
 
 //page
+const HomePage = lazy(() => import('@pages/home/Home'))
 const SignInPage = lazy(() => import('@pages/auth/SignIn'))
 const SignUpPage = lazy(() => import('@pages/auth/SignUp'))
 const ProductPage = lazy(() => import('@pages/product/Product'))
@@ -22,6 +23,7 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/product" element={<ProductPage />} />

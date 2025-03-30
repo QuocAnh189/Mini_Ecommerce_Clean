@@ -4,6 +4,9 @@ import { IoCartOutline } from 'react-icons/io5'
 //image
 import logo from '@assets/images/logo.png'
 
+//components
+import ProductModalCreate from '@components/ProductModalCreate'
+
 const AppBar = () => {
   return (
     <div className="flex bg-white text-black items-center justify-between px-[150px] py-3">
@@ -24,6 +27,15 @@ const AppBar = () => {
         </button>
       </div>
 
+      <button
+        className="btn btn-info"
+        onClick={() =>
+          (document?.getElementById('create_product_modal') as HTMLDialogElement).showModal()
+        }
+      >
+        <p className="text-white">Add Product</p>
+      </button>
+
       <div className="flex items-center gap-2">
         <button className="flex items-center gap-2">
           <div className="relative">
@@ -32,11 +44,18 @@ const AppBar = () => {
               <p className="text-sm text-white bg-green-600 rounded-full">2</p>
             </div>
           </div>
-          <a href="/cart" className="flex flex-col items-start">
+          <a
+            href="/cart"
+            className={`flex flex-col items-start hover:underline ${
+              location.pathname === '/cart' && 'text-green-600 font-bold'
+            }`}
+          >
             <p className="text-sm font-bold">Shopping Cart</p>
           </a>
         </button>
       </div>
+
+      <ProductModalCreate />
     </div>
   )
 }

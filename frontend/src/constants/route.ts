@@ -5,6 +5,7 @@ export interface IRoute {
 }
 
 export const routes: IRoute[] = [
+  { name: 'Home', path: '/' },
   { name: 'Product', path: '/product' },
   { name: 'Order', path: '/order' },
   { name: 'Profile', path: '/profile' },

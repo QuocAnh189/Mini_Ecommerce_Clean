@@ -1,4 +1,5 @@
 //icon
+import formatNumber from '@utils/formatNumber'
 import { SlHandbag } from 'react-icons/sl'
 
 const CardProduct = () => {
@@ -12,7 +13,7 @@ const CardProduct = () => {
       <div className="p-4 flex items-center justify-between">
         <div>
           <p className="text-gray500 font-medium">Green Apple</p>
-          <p className="text-black">100000 VND</p>
+          <p className="text-black">{formatNumber(100000)} VND</p>
         </div>
         <div className="bg-gray-300 p-3 rounded-full hover:bg-gray-400 flex items-center gap-2">
           +<SlHandbag />
