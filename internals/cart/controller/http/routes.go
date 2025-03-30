@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	cartRepo "ecommerce_clean/internals/cart/repository"
+	productRepo "ecommerce_clean/internals/product/repository"
 )
 
 func Routes(
@@ -21,7 +22,8 @@ func Routes(
 ) {
 
 	cartRepository := cartRepo.NewCartRepository(sqlDB)
-	cartUseCase := usecase.NewCartUseCase(validator, cartRepository)
+	productRepository := productRepo.NewProductRepository(sqlDB)
+	cartUseCase := usecase.NewCartUseCase(validator, cartRepository, productRepository)
 	cartHandler := NewCartHandler(cartUseCase)
 
 	authMiddleware := middlewares.NewAuthMiddleware(token, cache).TokenAuth()

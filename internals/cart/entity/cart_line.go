@@ -13,6 +13,7 @@ type CartLine struct {
 	ProductID string `json:"product_id"`
 	Product   *productEntity.Product
 	Quantity  uint            `json:"quantity"`
+	Price     float64         `json:"price"`
 	CreatedAt time.Time       `json:"created_at"`
 	UpdatedAt time.Time       `json:"updated_at"`
 	DeletedAt *gorm.DeletedAt `json:"deleted_at" gorm:"index"`
