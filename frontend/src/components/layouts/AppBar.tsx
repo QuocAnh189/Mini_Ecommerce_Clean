@@ -11,6 +11,7 @@ const AppBar = () => {
         <img src={logo} height={0} width={0} alt="" className="w-8 h-8" />
         Ecommerce Clean
       </a>
+
       <div className="flex items-center w-[600px] rounded-md border border-gray-400 overflow-hidden">
         <div className="p-3 text-gray-600">🔍</div>
         <input

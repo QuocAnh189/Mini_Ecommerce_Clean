@@ -1,5 +1,4 @@
-'use client'
-
+//hook
 import { useLocation } from 'react-router-dom'
 
 //icons
@@ -28,7 +27,7 @@ const Menu = () => {
       </div>
       <div className="flex items-center gap-2">
         <FaPhoneVolume size="24px" />
-        <p className="text-black">(219) 555-2214</p>
+        <p className="text-black">(84)702465814</p>
       </div>
     </div>
   )
