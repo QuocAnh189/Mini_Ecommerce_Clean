@@ -48,7 +48,7 @@ const Order = () => {
               <th>Code</th>
               <th>Total Price</th>
               <th>Status</th>
-              <th>Created</th>
+              <th>Updated</th>
             </tr>
           </thead>
           <tbody>

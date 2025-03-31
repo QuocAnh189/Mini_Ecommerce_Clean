@@ -7,6 +7,7 @@ type Cart struct {
 }
 
 type CartLine struct {
+	ID       string   `json:"id"`
 	Product  *Product `json:"product"`
 	Quantity int64    `json:"quantity"`
 	Price    float64  `json:"price"`

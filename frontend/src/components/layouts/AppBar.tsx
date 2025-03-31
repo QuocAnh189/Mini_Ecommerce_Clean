@@ -1,16 +1,14 @@
 //hooks
-import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDebounce } from '@hooks/useDebounce'
-
-//icons
-import { IoCartOutline } from 'react-icons/io5'
-
-//image
-import logo from '@assets/images/logo.png'
 
 //components
 import ProductModalCreate from '@components/ProductModalCreate'
+import CartIcon from '@components/CartIcon'
+
+//image
+import logo from '@assets/images/logo.png'
 
 const AppBar = () => {
   const navigate = useNavigate()
@@ -50,24 +48,7 @@ const AppBar = () => {
         <p className="text-white">Add Product</p>
       </button>
 
-      <div className="flex items-center gap-2">
-        <button className="flex items-center gap-2">
-          <div className="relative">
-            <IoCartOutline size="32px" />
-            <div className="bg-primary w-4 h-4 rounded-full absolute top-0 right-0">
-              <p className="text-sm text-white bg-green-600 rounded-full">2</p>
-            </div>
-          </div>
-          <a
-            href="/cart"
-            className={`flex flex-col items-start hover:underline ${
-              location.pathname === '/cart' && 'text-green-600 font-bold'
-            }`}
-          >
-            <p className="text-sm font-bold">Shopping Cart</p>
-          </a>
-        </button>
-      </div>
+      <CartIcon />
 
       <ProductModalCreate />
     </div>

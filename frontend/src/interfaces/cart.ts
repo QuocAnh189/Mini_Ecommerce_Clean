@@ -8,6 +8,7 @@ export interface ICart {
 }
 
 export interface ICartLine {
+  id: string
   product: IProductCart
   quantity: number
   price: number
@@ -17,6 +18,7 @@ export interface IProductCart {
   id: string
   code: string
   name: string
+  image_url: string
   description: string
   price: number
 }

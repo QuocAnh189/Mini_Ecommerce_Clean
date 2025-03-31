@@ -1,12 +1,12 @@
-//hook
+//hooks
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-//component
+//components
 import toast from 'react-hot-toast'
 import Loading from '@components/Loading'
 
-//interface
+//interfaces
 import { SignUpRequest } from '@interfaces/user'
 
 //redux
@@ -14,7 +14,7 @@ import { useSignUpMutation } from '@redux/services/auth'
 import { useAppDispatch } from '@redux/hook'
 import { setAuth } from '@redux/slices/auth'
 
-//icon
+//icons
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const initForm: SignUpRequest = {

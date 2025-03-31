@@ -34,12 +34,12 @@ export interface IListOrderRequest {
   order_desc: boolean
 }
 
-export interface PlaceOrderRequest {
+export interface IPlaceOrderRequest {
   user_id: string
-  lines: PlaceOrderLineRequest[]
+  lines: IPlaceOrderLineRequest[]
 }
 
-export interface PlaceOrderLineRequest {
+export interface IPlaceOrderLineRequest {
   product_id: string
   quantity: number
 }

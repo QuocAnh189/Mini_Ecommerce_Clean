@@ -1,5 +1,7 @@
-//util
+//interfaces
 import { IOrderLine } from '@interfaces/order'
+
+//utils
 import formatNumber from '@utils/formatNumber'
 
 interface IProps {

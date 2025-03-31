@@ -1,3 +1,6 @@
+//hooks
+import { useState } from 'react'
+
 //enums
 import { EStatusOrder } from '@constants/enum'
 
@@ -7,7 +10,6 @@ import Loading from './Loading'
 
 //redux
 import { useUpdateStatusOrderMutation } from '@redux/services/order'
-import { useState } from 'react'
 
 interface IProps {
   orderId: string
@@ -32,13 +34,11 @@ const UpdateStatusModel = (props: IProps) => {
   }
 
   return (
-    <dialog id="update_status_modal" className="modal">
+    <dialog id={`update_status_modal_${orderId}`} className="modal">
       <div className="modal-box">
         <h3 className="text-lg font-bold mb-4">Change Status</h3>
-        <select onChange={(e) => setStatus(e.target.value as EStatusOrder)} className="select">
-          <option disabled selected>
-            Pick a Status
-          </option>
+        <select defaultValue={status} onChange={(e) => setStatus(e.target.value as EStatusOrder)} className="select">
+          <option value="">Pick a Status</option>
           <option value={EStatusOrder.NEW} selected={EStatusOrder.NEW === currentStatus}>
             New
           </option>

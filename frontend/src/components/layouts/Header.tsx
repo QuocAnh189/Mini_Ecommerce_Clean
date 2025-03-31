@@ -49,7 +49,7 @@ const Header = () => {
         <div className="flex gap-2 text-sm items-center">
           {user ? (
             <>
-              <a href="/signin" className="flex items-center gap-2 hover:cursor-pointer hover:underline">
+              <a href="/profile" className="flex items-center gap-2 hover:cursor-pointer hover:underline">
                 <div className="avatar">
                   <div className="w-6 rounded-full">
                     <img src={user.avatar_url} />

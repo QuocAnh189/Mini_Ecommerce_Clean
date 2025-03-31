@@ -91,7 +91,7 @@ func (r *OrderRepo) GetMyOrders(ctx context.Context, req *dto.ListOrdersRequest)
 		query = append(query, db.NewQuery("status = ?", req.Status))
 	}
 
-	order := "created_at"
+	order := "created_at DESC"
 	if req.OrderBy != "" {
 		order = req.OrderBy
 		if req.OrderDesc {

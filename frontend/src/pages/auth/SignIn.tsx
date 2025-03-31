@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-//component
+//components
 import toast from 'react-hot-toast'
 import Loading from '@components/Loading'
 
@@ -11,10 +11,10 @@ import { useAppDispatch } from '@redux/hook'
 import { useSignInMutation } from '@redux/services/auth'
 import { setAuth } from '@redux/slices/auth'
 
-//type
+//interfaces
 import { SingInRequest } from '@interfaces/user'
 
-//icon
+//icons
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const initForm: SingInRequest = {

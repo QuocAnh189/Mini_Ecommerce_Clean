@@ -1,3 +1,4 @@
+//interfaces
 import { IUser } from '@interfaces/user'
 
 const Profile = () => {

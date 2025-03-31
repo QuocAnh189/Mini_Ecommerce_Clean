@@ -1,9 +1,8 @@
-//interface
+//interfaces
 import { IPagination } from '@interfaces/common'
 
-//icon
-import { GrFormNext } from 'react-icons/gr'
-import { GrPrevious } from 'react-icons/gr'
+//icons
+import { GrFormNext, GrPrevious } from 'react-icons/gr'
 
 interface Props {
   pagination: IPagination

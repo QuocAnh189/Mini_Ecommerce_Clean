@@ -9,6 +9,7 @@ import { apiOrder } from './services/order'
 
 //slice
 import authReducer, { AuthSliceKey } from './slices/auth'
+import cartReducer, { CartSliceKey } from './slices/cart'
 
 const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ const store = configureStore({
     [apiOrder.reducerPath]: apiOrder.reducer,
 
     [AuthSliceKey]: authReducer,
+    [CartSliceKey]: cartReducer,
   },
 
   middleware: (getDefaultMiddleware) =>

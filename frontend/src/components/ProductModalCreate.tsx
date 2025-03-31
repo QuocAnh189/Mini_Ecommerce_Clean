@@ -1,12 +1,15 @@
+//hooks
 import { useState } from 'react'
 
-//component
+//components
 import Loading from './Loading'
+import toast from 'react-hot-toast'
+
+//interfaces
+import { ICreateProductRequest } from '@interfaces/product'
 
 //redux
-import { ICreateProductRequest } from '@interfaces/product'
 import { useCreateProductMutation } from '@redux/services/product'
-import toast from 'react-hot-toast'
 
 const initForm: ICreateProductRequest = {
   name: '',

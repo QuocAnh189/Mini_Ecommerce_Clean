@@ -1,4 +1,4 @@
-//hook
+//hooks
 import { useLocation } from 'react-router-dom'
 
 //icons
@@ -17,9 +17,7 @@ const Menu = () => {
           <a
             key={index}
             href={route.path}
-            className={`hover:underline ${
-              route.path === location.pathname && 'text-green-600 font-bold'
-            }`}
+            className={`hover:underline ${route.path === location.pathname && 'text-green-600 font-bold'}`}
           >
             {route.name}
           </a>

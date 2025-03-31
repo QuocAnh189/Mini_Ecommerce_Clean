@@ -1,3 +1,4 @@
+//interfaces
 import { IUser } from '@interfaces/user'
 
 interface IProps {
@@ -6,6 +7,7 @@ interface IProps {
 
 const UserItem = (props: IProps) => {
   const { user } = props
+
   return (
     <tr>
       <td>

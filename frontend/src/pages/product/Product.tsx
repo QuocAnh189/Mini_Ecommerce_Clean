@@ -26,7 +26,6 @@ const initParams: IListProductRequest = {
 
 const Product = () => {
   const location = useLocation()
-  console.log(location)
   const [params, setParams] = useState<IListProductRequest>({ ...initParams, search: location.state?.search || '' })
   const { data: products, isLoading } = useGetListProductsQuery(params)
   const pagination: IPagination = usePagination(products?.metadata.total_count, initParams.size)

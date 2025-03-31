@@ -1,10 +1,10 @@
+//icon
+import { FaArrowRight } from 'react-icons/fa'
+
 interface IProps {
   image: any
   left: boolean
 }
-
-//icon
-import { FaArrowRight } from 'react-icons/fa'
 
 const BannerItem = (props: IProps) => {
   const { image, left } = props
@@ -19,9 +19,7 @@ const BannerItem = (props: IProps) => {
         <p className="text-xl font-semibold">
           Sale up to <span className="">30% OFF</span>
         </p>
-        <p className="text-sm text-gray500">
-          Free shipping on all your order we delivery, you enjoin
-        </p>
+        <p className="text-sm text-gray500">Free shipping on all your order we delivery, you enjoin</p>
         <button className="flex items-center gap-3 bg-green-600 rounded-3xl px-6 py-2">
           <p className="text-white font-medium">Show now</p>
           <FaArrowRight color="white" />

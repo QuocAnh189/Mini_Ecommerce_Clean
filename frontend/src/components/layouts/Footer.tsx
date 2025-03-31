@@ -1,5 +1,3 @@
-import React from 'react'
-
 //image
 import logo from '@assets/images/logo.png'
 import applePay from '@assets/images/applePay.png'
@@ -15,11 +13,10 @@ const Footer = () => {
         <div className="flex flex-col items-start gap-3">
           <div className="flex items-center gap-2">
             <img src={logo} height={0} width={0} alt="" className="w-8 h-8" />
-            <p className="text-white font-bold text-2xl">EcoEat</p>
+            <p className="text-white font-bold text-2xl">Ecommerce Clean</p>
           </div>
           <p className="text-gray-500 text-sm max-w-80">
-            Morbi cursus porttitor enim lobortis molestie. Duis gravida turpis dui, eget bibendum
-            magna congue nec.
+            Morbi cursus porttitor enim lobortis molestie. Duis gravida turpis dui, eget bibendum magna congue nec.
           </p>
           <div className="flex items-center gap-3">
             <button>

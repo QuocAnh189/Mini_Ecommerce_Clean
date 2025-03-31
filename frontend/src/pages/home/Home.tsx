@@ -1,12 +1,12 @@
 //components
 import BannerItem from '@components/BannerItem'
 
-// swiper
+//swiper
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { Pagination, Navigation } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { Pagination, Navigation } from 'swiper/modules'
 
 //image
 import image1 from '@assets/images/BG1.png'

@@ -1,6 +1,9 @@
 //hook
 import { useNavigate } from 'react-router-dom'
 
+//components
+import UpdateStatusModel from './UpdateStatusModel'
+
 //util
 import formatDate from '@utils/formatDate'
 import formatNumber from '@utils/formatNumber'
@@ -10,7 +13,6 @@ import { IOrder } from '@interfaces/order'
 
 //enum
 import { EStatusOrder } from '@constants/enum'
-import UpdateStatusModel from './UpdateStatusModel'
 
 interface IProps {
   order: IOrder
@@ -58,14 +60,16 @@ const OrderItem = (props: IProps) => {
         </td>
         <td>{formatDate(order.updated_at)}</td>
         <th>
-          <button onClick={navigateToOrderDetails} className="btn btn-ghost btn-xs">
+          <button onClick={navigateToOrderDetails} className="btn btn-ghost btn-md">
             details
           </button>
         </th>
         <th>
           <button
-            onClick={() => (document?.getElementById('update_status_modal') as HTMLDialogElement).showModal()}
-            className="btn btn-ghost btn-xs"
+            onClick={() =>
+              (document?.getElementById(`update_status_modal_${order.id}`) as HTMLDialogElement).showModal()
+            }
+            className="btn btn-ghost btn-md"
           >
             change status
           </button>

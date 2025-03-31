@@ -44,7 +44,7 @@ export const apiCart = createApi({
 
     updateCartLine: builder.mutation<string, { userId: string; data: IUpdateCartLineRequest }>({
       query: ({ userId, data }) => ({
-        url: `/carts/${userId}`,
+        url: `/carts/cart-line/${userId}`,
         method: 'PUT',
         body: data,
       }),
