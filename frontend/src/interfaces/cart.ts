@@ -27,6 +27,13 @@ export interface IAddProductRequest {
   quantity: number
 }
 
+export interface IUpdateCartLineRequest {
+  id: string
+  cart_id: string
+  product_id: string
+  quantity: number
+}
+
 export interface IRemoveProductRequest {
   cart_id: string
   product_id: string

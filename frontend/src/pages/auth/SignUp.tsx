@@ -2,8 +2,17 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+//component
+import toast from 'react-hot-toast'
+import Loading from '@components/Loading'
+
 //interface
-import { SignUpRequest } from 'interface/user'
+import { SignUpRequest } from '@interfaces/user'
+
+//redux
+import { useSignUpMutation } from '@redux/services/auth'
+import { useAppDispatch } from '@redux/hook'
+import { setAuth } from '@redux/slices/auth'
 
 //icon
 import { FiEye, FiEyeOff } from 'react-icons/fi'
@@ -17,14 +26,44 @@ const initForm: SignUpRequest = {
 
 const SignUp = () => {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [form, setForm] = useState<SignUpRequest>(initForm)
+
+  const [Register, { isLoading }] = useSignUpMutation()
 
   const handleChangeForm = (name: string, value: any) => {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleRegister = async () => {}
+  const handleRegister = async () => {
+    const formData = new FormData()
+    formData.append('email', form.email)
+    formData.append('name', form.name)
+    formData.append('password', form.password)
+    formData.append('avatar', form.avatar)
+
+    try {
+      const result = await Register(formData).unwrap()
+
+      if (result) {
+        dispatch(setAuth(result))
+        localStorage.setItem(
+          'token',
+          JSON.stringify({
+            accessToken: result.accessToken,
+            refreshToken: result.refreshToken,
+          }),
+        )
+        localStorage.setItem('user', JSON.stringify(result.user))
+        toast.success('Register successfully.')
+        navigate('/')
+      }
+    } catch (e: any) {
+      toast.error('Something went wrong.')
+    }
+  }
 
   return (
     <section className="h-screen bg-gray-50 dark:bg-gray-900">
@@ -36,9 +75,7 @@ const SignUp = () => {
             </h1>
             <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Your Email
-                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Email</label>
                 <input
                   value={form.email}
                   type="email"
@@ -53,9 +90,7 @@ const SignUp = () => {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Name
-                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                 <input
                   value={form.name}
                   type="text"
@@ -70,9 +105,7 @@ const SignUp = () => {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password
-                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                 <div className="relative">
                   <input
                     value={form.password}
@@ -97,9 +130,7 @@ const SignUp = () => {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Avatar
-                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Avatar</label>
                 <input
                   type="file"
                   name="avatar"
@@ -112,10 +143,11 @@ const SignUp = () => {
               </div>
 
               <button
+                disabled={isLoading}
                 onClick={handleRegister}
-                className="w-full text-white bg-green-500 hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full text-white bg-green-500 hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 hover:cursor-pointer"
               >
-                Create an account
+                {isLoading ? <Loading /> : 'Create an account'}
               </button>
 
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">

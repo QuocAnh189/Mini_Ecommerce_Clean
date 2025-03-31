@@ -96,7 +96,7 @@ func (ou *OrderUseCase) UpdateOrder(ctx context.Context, orderID, userID string,
 		return nil, errors.New("permission denied")
 	}
 
-	if order.Status == utils.OrderStatusDone || order.Status == utils.OrderStatusCancelled {
+	if order.Status == utils.OrderStatusDone || order.Status == utils.OrderStatusCanceled {
 		return nil, errors.New("invalid order status")
 	}
 

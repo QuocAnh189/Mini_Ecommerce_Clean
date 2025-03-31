@@ -13,3 +13,12 @@ export interface IMetadata {
   has_previous: boolean
   has_next: boolean
 }
+
+export interface IPagination {
+  nextPage: () => void
+  prevPage: () => void
+  goToPage: (page: number) => void
+  currentPage: number
+  setCurrentPage: (page: number) => void
+  maxPage: number
+}

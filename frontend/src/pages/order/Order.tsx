@@ -1,14 +1,43 @@
-//hook
-import { useNavigate } from 'react-router-dom'
-
-//util
-import formatDate from '@utils/formatDate'
+//hooks
+import { useState, useEffect } from 'react'
+import { usePagination } from '@hooks/usePagination'
 
 //components
+import OrderItem from '@components/OrderItem'
 import Pagination from '@components/Pagination'
+import Skeleton from '@components/Skeleton'
+
+//interfaces
+import { IPagination } from '@interfaces/common'
+import { IListOrderRequest, IOrder } from '@interfaces/order'
+
+//redux
+import { useGetListMyOrdersQuery } from '@redux/services/order'
+
+const initParams: IListOrderRequest = {
+  user_id: JSON.parse(localStorage.getItem('user') || '{}').id,
+  code: '',
+  status: '',
+  page: 1,
+  size: 10,
+  order_by: '',
+  order_desc: false,
+}
 
 const Order = () => {
-  const navigate = useNavigate()
+  const [params, setParams] = useState<IListOrderRequest>(initParams)
+  const { data: orders, isLoading } = useGetListMyOrdersQuery(params)
+  const pagination: IPagination = usePagination(orders?.metadata.total_count, initParams.size)
+
+  useEffect(() => {
+    setParams((prev) => ({
+      ...prev,
+      page: pagination.currentPage,
+    }))
+  }, [pagination.currentPage])
+
+  if (isLoading) return <Skeleton />
+
   return (
     <div className="h-screen flex flex-col items-center mt-20 gap-4">
       <div className="overflow-x-auto px-40">
@@ -23,42 +52,12 @@ const Order = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th>1</th>
-              <td>Cy Ganderton</td>
-              <td>Quality Control Specialist</td>
-              <td>Blue</td>
-              <td>{formatDate(Date())}</td>
-              <th>
-                <button onClick={() => navigate('/order/1')} className="btn btn-ghost btn-xs">
-                  details
-                </button>
-              </th>
-            </tr>
-            <tr>
-              <th>2</th>
-              <td>Hart Hagerty</td>
-              <td>Desktop Support Technician</td>
-              <td>Purple</td>
-              <td>{formatDate(Date())}</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
-            <tr>
-              <th>3</th>
-              <td>Brice Swyre</td>
-              <td>Tax Accountant</td>
-              <td>Red</td>
-              <td>{formatDate(Date())}</td>
-              <th>
-                <button className="btn btn-ghost btn-xs">details</button>
-              </th>
-            </tr>
+            {orders &&
+              orders.items.map((order: IOrder, index: number) => <OrderItem key={`order-${index}`} order={order} />)}
           </tbody>
         </table>
       </div>
-      <Pagination />
+      {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
     </div>
   )
 }

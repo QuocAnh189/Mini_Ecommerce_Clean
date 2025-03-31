@@ -2,24 +2,32 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+//component
+import toast from 'react-hot-toast'
+import Loading from '@components/Loading'
+
+//redux
+import { useAppDispatch } from '@redux/hook'
+import { useSignInMutation } from '@redux/services/auth'
+import { setAuth } from '@redux/slices/auth'
+
 //type
-import { SingInRequest } from 'interface/user'
+import { SingInRequest } from '@interfaces/user'
 
 //icon
 import { FiEye, FiEyeOff } from 'react-icons/fi'
-
-//component
-import toast from 'react-hot-toast'
 
 const initForm: SingInRequest = {
   email: '',
   password: '',
 }
 
-const notify = () => toast.success('Here is your toast.')
-
 const SignIn = () => {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const [Login, { isLoading }] = useSignInMutation()
+
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [form, setForm] = useState<SingInRequest>(initForm)
 
@@ -28,7 +36,25 @@ const SignIn = () => {
   }
 
   const handleLogin = async () => {
-    notify()
+    try {
+      const result = await Login(form).unwrap()
+
+      if (result) {
+        dispatch(setAuth(result))
+        localStorage.setItem(
+          'token',
+          JSON.stringify({
+            accessToken: result.accessToken,
+            refreshToken: result.refreshToken,
+          }),
+        )
+        localStorage.setItem('user', JSON.stringify(result.user))
+        toast.success('Login successfully.')
+        navigate('/')
+      }
+    } catch (e: any) {
+      toast.error('Something went wrong.')
+    }
   }
 
   return (
@@ -42,9 +68,7 @@ const SignIn = () => {
 
             <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Your email
-                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                 <input
                   value={form.email}
                   type="email"
@@ -59,9 +83,7 @@ const SignIn = () => {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password
-                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                 <div className="relative">
                   <input
                     value={form.password}
@@ -86,10 +108,11 @@ const SignIn = () => {
               </div>
 
               <button
+                disabled={isLoading}
                 onClick={handleLogin}
                 className="w-full text-white bg-green-500 hover:bg-green-600 hover:cursor-pointer focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign in
+                {isLoading ? <Loading /> : 'Sign in'}
               </button>
 
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">

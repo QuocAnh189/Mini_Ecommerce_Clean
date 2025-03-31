@@ -47,11 +47,12 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 
 	var res dto.ListProductResponse
 	cacheKey := c.Request.URL.RequestURI()
-	err := h.cache.Get(cacheKey, &res)
-	if err == nil {
-		response.JSON(c, http.StatusOK, res)
-		return
-	}
+	//if you want to cache (I comment this block code for visualize UI Created)
+	//err := h.cache.Get(cacheKey, &res)
+	//if err == nil {
+	//	response.JSON(c, http.StatusOK, res)
+	//	return
+	//}
 
 	products, pagination, err := h.usecase.ListProducts(c, &req)
 	if err != nil {

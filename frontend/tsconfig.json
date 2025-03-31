@@ -21,6 +21,7 @@
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
       "@constants/*": ["constants/*"],
+      "@hooks/*": ["hooks/*"],
       "@interfaces/*": ["interfaces/*"],
       "@layouts/*": ["layouts/*"],
       "@libs/*": ["libs/*"],

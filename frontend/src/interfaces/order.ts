@@ -1,13 +1,15 @@
-export interface Order {
+import { EStatusOrder } from '@constants/enum'
+
+export interface IOrder {
   id: string
   code: string
-  lines: OrderLine[]
+  lines: IOrderLine[]
   total_price: number
-  status: string
+  status: EStatusOrder
   updated_at: string
 }
 
-export interface OrderLine {
+export interface IOrderLine {
   product: IProductOrder
   quantity: number
   price: number
@@ -17,13 +19,15 @@ export interface IProductOrder {
   id: string
   code: string
   name: string
+  image_url: string
   description: string
   price: number
 }
 
 export interface IListOrderRequest {
+  user_id: string
   code: string
-  status: boolean
+  status: string
   page: number
   size: number
   order_by: string

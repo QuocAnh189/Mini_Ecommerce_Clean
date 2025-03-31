@@ -1,12 +1,32 @@
-//utils
-import formatNumber from '@utils/formatNumber'
+//hooks
+import { useLocation, useNavigate } from 'react-router-dom'
+import { usePagination } from '@hooks/usePagination'
 
 //components
 import Pagination from '@components/Pagination'
+import OrderLineItem from '@components/OrderLineItem'
+
+//interfaces
+import { IOrderLine } from '@interfaces/order'
+import { IPagination } from '@interfaces/common'
 
 const OrderLine = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { items }: { items: IOrderLine[] } = location.state
+
+  const pagination: IPagination = usePagination(items.length, 4)
+
   return (
     <div className="h-screen px-40 mt-20">
+      <button
+        onClick={() => {
+          navigate(-1)
+        }}
+        className="btn btn-outline btn-info"
+      >
+        Back
+      </button>
       <div className="overflow-x-auto">
         <table className="table">
           <thead>
@@ -18,32 +38,16 @@ const OrderLine = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div className="flex items-center gap-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle h-12 w-12">
-                      <img
-                        src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-                        alt="Avatar Tailwind CSS Component"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Hart Hagerty</div>
-                  </div>
-                </div>
-              </td>
-              <td>Zemlak, Daniel and Leannon</td>
-              <td>10</td>
-              <td>{formatNumber(100000)} VND</td>
-            </tr>
+            {items &&
+              items.map((orderLine: IOrderLine, index: number) => (
+                <OrderLineItem key={`order-line-${index}`} orderLine={orderLine} />
+              ))}
           </tbody>
         </table>
       </div>
 
       <div className="flex justify-center mt-10">
-        <Pagination />
+        {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
       </div>
     </div>
   )

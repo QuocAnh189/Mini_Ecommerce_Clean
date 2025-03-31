@@ -13,6 +13,7 @@ const CartPage = lazy(() => import('@pages/cart/Cart'))
 const OrderPage = lazy(() => import('@pages/order/Order'))
 const OrderLinePage = lazy(() => import('@pages/order/OrderLine'))
 const ProfilePage = lazy(() => import('@pages/profile/Profile'))
+const UserPage = lazy(() => import('@pages/user/User'))
 
 //component
 import Loader from '@components/Loader'
@@ -31,6 +32,7 @@ function App() {
             <Route path="/order" element={<OrderPage />} />
             <Route path="/order/:id" element={<OrderLinePage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/users" element={<UserPage />} />
           </Route>
         </Routes>
       </Suspense>

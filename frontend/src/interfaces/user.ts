@@ -5,6 +5,13 @@ export interface IUser {
   avatar_url: string
   created_at: string
   updated_at: string
+  deleted_at: string
+}
+
+export interface IAuth {
+  accessToken: string
+  refreshToken: string
+  user: IUser
 }
 
 export interface SingInRequest {
@@ -12,21 +19,18 @@ export interface SingInRequest {
   password: string
 }
 
-export interface SingInResponse {
-  accessToken: string
-  refreshToken: string
-  user: IUser
-}
-
-export interface SingUpResponse {
-  accessToken: string
-  refreshToken: string
-  user: IUser
-}
-
 export interface SignUpRequest {
   email: string
   name: string
   avatar: any
   password: string
+}
+
+export interface IListUserRequest {
+  search: string
+  page: number
+  size: number
+  order_by: string
+  order_desc: boolean
+  take_all: boolean
 }

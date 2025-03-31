@@ -8,12 +8,12 @@ const (
 	OrderStatusNew        OrderStatus = "new"
 	OrderStatusInProgress OrderStatus = "progress"
 	OrderStatusDone       OrderStatus = "done"
-	OrderStatusCancelled  OrderStatus = "cancelled"
+	OrderStatusCanceled   OrderStatus = "canceled"
 )
 
 func (s OrderStatus) IsValid() bool {
 	switch s {
-	case OrderStatusNew, OrderStatusInProgress, OrderStatusDone, OrderStatusCancelled:
+	case OrderStatusNew, OrderStatusInProgress, OrderStatusDone, OrderStatusCanceled:
 		return true
 	}
 	return false

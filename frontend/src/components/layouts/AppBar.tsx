@@ -1,3 +1,8 @@
+//hooks
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useDebounce } from '@hooks/useDebounce'
+
 //icons
 import { IoCartOutline } from 'react-icons/io5'
 
@@ -8,6 +13,18 @@ import logo from '@assets/images/logo.png'
 import ProductModalCreate from '@components/ProductModalCreate'
 
 const AppBar = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const [search, setSearch] = useState('')
+  const debouncedSearchTerm = useDebounce(search, 500)
+
+  useEffect(() => {
+    if (debouncedSearchTerm !== '' || location.pathname === '/product') {
+      navigate('/product', { state: { search: debouncedSearchTerm } })
+    }
+  }, [debouncedSearchTerm])
+
   return (
     <div className="flex bg-white text-black items-center justify-between px-[150px] py-3">
       <a href="/" className="flex items-center gap-2 text-xl font-bold">
@@ -19,19 +36,16 @@ const AppBar = () => {
         <div className="p-3 text-gray-600">🔍</div>
         <input
           type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="What do you want to find today?..."
           className="flex-1 border-none p-2 outline-none"
         />
-        <button className="h-full border-none bg-green-600 text-white px-4 py-3 cursor-pointer hover:bg-green-300 rounded-md">
-          Search
-        </button>
       </div>
 
       <button
         className="btn btn-info"
-        onClick={() =>
-          (document?.getElementById('create_product_modal') as HTMLDialogElement).showModal()
-        }
+        onClick={() => (document?.getElementById('create_product_modal') as HTMLDialogElement).showModal()}
       >
         <p className="text-white">Add Product</p>
       </button>

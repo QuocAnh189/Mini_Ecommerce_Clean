@@ -15,6 +15,6 @@ type ListOrdersRequest struct {
 }
 
 type ListOrdersResponse struct {
-	Orders     []*Order           `json:"orders,omitempty"`
-	Pagination *paging.Pagination `json:"pagination,omitempty"`
+	Orders     []*Order           `json:"items"`
+	Pagination *paging.Pagination `json:"metadata"`
 }
