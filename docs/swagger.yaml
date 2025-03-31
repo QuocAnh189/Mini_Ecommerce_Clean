@@ -19,20 +19,19 @@ definitions:
         type: string
       lines:
         items:
-          $ref: '#/definitions/dto.CartLineRequest'
+          $ref: '#/definitions/dto.CartLine'
         type: array
       user:
         $ref: '#/definitions/internals_cart_controller_dto.User'
     type: object
-  dto.CartLineRequest:
+  dto.CartLine:
     properties:
-      product_id:
-        type: string
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/internals_cart_controller_dto.Product'
       quantity:
         type: integer
-    required:
-    - product_id
-    - quantity
     type: object
   dto.ListOrdersResponse:
     properties:
@@ -57,6 +56,8 @@ definitions:
         type: string
       total_price:
         type: number
+      updated_at:
+        type: string
     type: object
   dto.OrderLine:
     properties:
@@ -136,6 +137,37 @@ definitions:
     - refreshToken
     - user
     type: object
+  dto.UpdateCartLineRequest:
+    properties:
+      cart_id:
+        type: string
+      id:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - cart_id
+    - id
+    - product_id
+    - quantity
+    type: object
+  internals_cart_controller_dto.Product:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
   internals_cart_controller_dto.User:
     properties:
       email:
@@ -147,6 +179,8 @@ definitions:
     properties:
       code:
         type: string
+      description:
+        type: string
       id:
         type: string
       name:
@@ -156,11 +190,15 @@ definitions:
     type: object
   internals_user_controller_dto.User:
     properties:
+      avatar_url:
+        type: string
       created_at:
         type: string
       email:
         type: string
       id:
+        type: string
+      name:
         type: string
       updated_at:
         type: string
@@ -314,49 +352,6 @@ paths:
       tags:
       - Auth
   /carts/{userID}:
-    get:
-      description: Fetches the shopping cart details of the authenticated user based
-        on the provided user ID.
-      parameters:
-      - description: User ID
-        in: path
-        name: userID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the user's cart
-          schema:
-            $ref: '#/definitions/dto.Cart'
-        "400":
-          description: Bad Request - Invalid request parameters
-          schema:
-            $ref: '#/definitions/response.Response'
-        "401":
-          description: Unauthorized - User ID mismatch or authentication failed
-          schema:
-            $ref: '#/definitions/response.Response'
-        "403":
-          description: Forbidden - User does not have the required permissions
-          schema:
-            $ref: '#/definitions/response.Response'
-        "404":
-          description: Not Found - Cart not found for the given user ID
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error - An error occurred while processing
-            the request
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - ApiKeyAuth: []
-      summary: Retrieve the cart of a user
-      tags:
-      - Carts
-  /carts/{userID}/products:
     delete:
       consumes:
       - application/json
@@ -403,6 +398,48 @@ paths:
       summary: Remove a product from the user's cart
       tags:
       - Carts
+    get:
+      description: Fetches the shopping cart details of the authenticated user based
+        on the provided user ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user's cart
+          schema:
+            $ref: '#/definitions/dto.Cart'
+        "400":
+          description: Bad Request - Invalid request parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User ID mismatch or authentication failed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found - Cart not found for the given user ID
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve the cart of a user
+      tags:
+      - Carts
     post:
       consumes:
       - application/json
@@ -446,6 +483,53 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Add a product to the user's cart
+      tags:
+      - Carts
+  /carts/cart-line/{userID}:
+    put:
+      consumes:
+      - application/json
+      description: Updates the quantity or details of a specific product in the authenticated
+        user's shopping cart.
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Updated cart line details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCartLineRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update cart successfully
+          schema:
+            type: string
+        "400":
+          description: Bad Request - Invalid request parameters
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized - User ID mismatch or authentication failed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "403":
+          description: Forbidden - User does not have the required permissions
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error - An error occurred while processing
+            the request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a cart line item
       tags:
       - Carts
   /orders:

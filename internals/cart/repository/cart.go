@@ -2,16 +2,15 @@ package repository
 
 import (
 	"context"
-	"ecommerce_clean/internals/cart/controller/dto"
-
 	"ecommerce_clean/db"
 	"ecommerce_clean/internals/cart/entity"
 )
 
 type ICartRepository interface {
 	GetCartByUserID(ctx context.Context, userID string) (*entity.Cart, error)
-	GetCartLineByProductIDAndCartID(ctx context.Context, req *dto.RemoveProductRequest) (*entity.CartLine, error)
+	GetCartLineByProductIDAndCartID(ctx context.Context, cartID string, productID string) (*entity.CartLine, error)
 	CreateCartLine(ctx context.Context, cartLine *entity.CartLine) error
+	UpdateCartLine(ctx context.Context, cartLine *entity.CartLine) error
 	RemoveCartLine(ctx context.Context, cartLine *entity.CartLine) error
 }
 
@@ -37,11 +36,11 @@ func (cr *CartRepository) GetCartByUserID(ctx context.Context, userID string) (*
 	return &cart, nil
 }
 
-func (cr *CartRepository) GetCartLineByProductIDAndCartID(ctx context.Context, req *dto.RemoveProductRequest) (*entity.CartLine, error) {
+func (cr *CartRepository) GetCartLineByProductIDAndCartID(ctx context.Context, cartID string, productID string) (*entity.CartLine, error) {
 	var cartLine entity.CartLine
 	opts := []db.FindOption{
-		db.WithQuery(db.NewQuery("cart_id = ?", req.CartID)),
-		db.WithQuery(db.NewQuery("product_id = ?", req.ProductID)),
+		db.WithQuery(db.NewQuery("cart_id = ?", cartID)),
+		db.WithQuery(db.NewQuery("product_id = ?", productID)),
 	}
 
 	if err := cr.db.FindOne(ctx, &cartLine, opts...); err != nil {
@@ -53,6 +52,10 @@ func (cr *CartRepository) GetCartLineByProductIDAndCartID(ctx context.Context, r
 
 func (cr *CartRepository) CreateCartLine(ctx context.Context, cartLine *entity.CartLine) error {
 	return cr.db.Create(ctx, cartLine)
+}
+
+func (cr *CartRepository) UpdateCartLine(ctx context.Context, cartLine *entity.CartLine) error {
+	return cr.db.Update(ctx, cartLine)
 }
 
 func (cr *CartRepository) RemoveCartLine(ctx context.Context, cartLine *entity.CartLine) error {

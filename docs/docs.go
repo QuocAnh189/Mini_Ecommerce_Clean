@@ -188,6 +188,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/carts/cart-line/{userID}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Updates the quantity or details of a specific product in the authenticated user's shopping cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carts"
+                ],
+                "summary": "Update a cart line item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated cart line details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateCartLineRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update cart successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User ID mismatch or authentication failed",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User does not have the required permissions",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - An error occurred while processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/carts/{userID}": {
             "get": {
                 "security": [
@@ -250,9 +320,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/carts/{userID}/products": {
+            },
             "post": {
                 "security": [
                     {
@@ -1247,7 +1315,7 @@ const docTemplate = `{
                 "lines": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CartLineRequest"
+                        "$ref": "#/definitions/dto.CartLine"
                     }
                 },
                 "user": {
@@ -1255,15 +1323,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CartLineRequest": {
+        "dto.CartLine": {
             "type": "object",
-            "required": [
-                "product_id",
-                "quantity"
-            ],
             "properties": {
-                "product_id": {
-                    "type": "string"
+                "price": {
+                    "type": "number"
+                },
+                "product": {
+                    "$ref": "#/definitions/internals_cart_controller_dto.Product"
                 },
                 "quantity": {
                     "type": "integer"
@@ -1304,6 +1371,9 @@ const docTemplate = `{
                 },
                 "total_price": {
                     "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -1423,6 +1493,52 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UpdateCartLineRequest": {
+            "type": "object",
+            "required": [
+                "cart_id",
+                "id",
+                "product_id",
+                "quantity"
+            ],
+            "properties": {
+                "cart_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internals_cart_controller_dto.Product": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "internals_cart_controller_dto.User": {
             "type": "object",
             "properties": {
@@ -1440,6 +1556,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -1454,6 +1573,9 @@ const docTemplate = `{
         "internals_user_controller_dto.User": {
             "type": "object",
             "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -1461,6 +1583,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "updated_at": {

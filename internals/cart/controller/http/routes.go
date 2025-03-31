@@ -32,6 +32,7 @@ func Routes(
 	{
 		cartRoute.GET("/:userID", cartHandler.GetCart)
 		cartRoute.POST("/:userID", cartHandler.AddProductToCart)
+		cartRoute.PUT("/cart-line/:userID", cartHandler.UpdateCartLine)
 		cartRoute.DELETE("/:userID", cartHandler.RemoveProductToCart)
 	}
 }

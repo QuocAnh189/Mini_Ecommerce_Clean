@@ -16,6 +16,7 @@ import (
 type ICartUseCase interface {
 	GetCartByUserID(ctx context.Context, userID string) (*entity.Cart, error)
 	AddProduct(ctx context.Context, req *dto.AddProductRequest) error
+	UpdateCartLine(ctx context.Context, req *dto.UpdateCartLineRequest) error
 	RemoveProduct(ctx context.Context, req *dto.RemoveProductRequest) error
 }
 
@@ -68,8 +69,33 @@ func (cu *CartUseCase) AddProduct(ctx context.Context, req *dto.AddProductReques
 	return nil
 }
 
+func (cu *CartUseCase) UpdateCartLine(ctx context.Context, req *dto.UpdateCartLineRequest) error {
+	if err := cu.validator.ValidateStruct(req); err != nil {
+		return err
+	}
+
+	product, err := cu.productRepo.GetProductById(ctx, req.ProductID)
+	if err != nil {
+		return err
+	}
+
+	cartLine, err := cu.cartRepo.GetCartLineByProductIDAndCartID(ctx, req.CartID, req.ProductID)
+	if err != nil {
+		return err
+	}
+	cartLine.Price = product.Price * float64(req.Quantity)
+	utils.MapStruct(cartLine, req)
+
+	err = cu.cartRepo.UpdateCartLine(ctx, cartLine)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (cu *CartUseCase) RemoveProduct(ctx context.Context, req *dto.RemoveProductRequest) error {
-	cartLine, err := cu.cartRepo.GetCartLineByProductIDAndCartID(ctx, req)
+	cartLine, err := cu.cartRepo.GetCartLineByProductIDAndCartID(ctx, req.CartID, req.ProductID)
 	if err != nil {
 		return err
 	}
