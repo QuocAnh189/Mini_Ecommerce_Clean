@@ -16,7 +16,7 @@ The purpose of the template is to show:
 
 Using the principles of Robert Martin (aka Uncle Bob).
 
-## Demo
+## Demo (Youtube)
 
 [![Watch the demo](docs/static/screeen.png)](https://www.youtube.com/watch?v=ZjRNu9VYYfw)
 
