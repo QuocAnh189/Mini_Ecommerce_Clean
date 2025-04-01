@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+//interfaces
 import { IAuth, SingInRequest } from '@interfaces/user'
 
 export const apiAuth = createApi({

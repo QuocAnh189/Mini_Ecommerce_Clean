@@ -2,9 +2,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-//component
-import Skeleton from './Skeleton'
-
 //interfaces
 import { IUser } from '@interfaces/user'
 
@@ -20,7 +17,7 @@ const CartIcon = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const user: IUser = JSON.parse(localStorage.getItem('user') || '{}')
-  const { data: cart, isFetching } = useGetCartQuery(user?.id!)
+  const { data: cart } = useGetCartQuery(user?.id!)
 
   useEffect(() => {
     if (cart) {
@@ -30,10 +27,6 @@ const CartIcon = () => {
 
   const navigateCartScreen = () => {
     navigate('/cart', { state: { lines: cart?.lines } })
-  }
-
-  if (isFetching) {
-    return <Skeleton />
   }
 
   return (

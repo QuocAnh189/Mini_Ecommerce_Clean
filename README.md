@@ -2,6 +2,10 @@
 
 # Go-Ecommerce-Clean Architecture
 
+## ⭐⭐⭐ Give Me Star
+
+If this project is helpful to you, please consider giving it a star on GitHub. Contact with me if you have a question. 
+
 ## Overview
 
 The purpose of the template is to show:
@@ -11,6 +15,12 @@ The purpose of the template is to show:
 - how not to lose control when a project grows
 
 Using the principles of Robert Martin (aka Uncle Bob).
+
+## Demo
+
+[![Watch the demo](docs/static/screeen.png)](https://www.youtube.com/watch?v=ZjRNu9VYYfw)
+
+
 
 ## Clean Architecture
 ![Clean](docs/static/clean.excalidraw.svg)
@@ -33,6 +43,7 @@ Using the principles of Robert Martin (aka Uncle Bob).
 
 ## Tech Stack
 ![TechStack](docs/static/techstack.excalidraw.svg)
+- [React](https://react.dev)
 - [Restful API](https://docs.github.com/en/rest?apiVersion=2022-11-28)
 - [Domain Driven Design](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartI/ConceptsOfModernProgramming.html)
 - [Gin-gonic](https://github.com/gin-gonic/gin)
@@ -48,7 +59,9 @@ Using the principles of Robert Martin (aka Uncle Bob).
 - [Prometheus](https://github.com/prometheus/client_golang)
 
 ## Project Structure
-### `cmd/app/main.go`
+![Project_Structure](docs/static/project_structure.excalidraw.svg)
+
+### `cmd/app`
 
 Entry point of the application. Responsible for initializing the configuration, setting up the logger, and starting the application.
 
@@ -60,25 +73,21 @@ Contains configuration files for different environments, such as database connec
 
 Holds database-related files, including database setup and option function.
 
+### `frontend`
+
+Setup client for demo project.
+
 ### `docs`
 
 Contains documentation files, API specifications, and related documentation resources.
 
 ### `internals`
 
-This directory houses the core business logic of the application, divided into different modules:
-
-order/: Manages order-related operations, including order creation, processing, and tracking.
-
-product/: Handles product-related functionalities such as product management, retrieval, and updates.
-
-server/: Initializes and configures the HTTP server, middleware, and routing.
-
-user/: Manages user authentication, registration, and profile management.
+This directory houses the core business logic of the application, divided into multiples modules
 
 ### `nginx`
 
-Stores configuration files for Nginx, which may be used as a reverse proxy or load balancer.
+Stores configuration files for Nginx
 
 ### `pkgs`
 
@@ -88,13 +97,13 @@ Contains reusable packages and utilities that can be shared across different par
 
 Includes utility functions and helper methods used throughout the project.
 
-docker-compose.yml
+### `grafana`
 
-Defines multi-container Docker applications for setting up the development and production environment.
+Contains configuration files and dashboards for monitoring application metrics using Grafana.
 
-Dockerfile
+### `prometheus`
 
-Defines how the application is built and run inside a Docker container.
+Holds configuration files for Prometheus, which collects and stores metrics from the application for monitoring and alerting.
 
 ## How to run application (Docker)
 1. Clone the repo and cd into it
@@ -105,6 +114,7 @@ Defines how the application is built and run inside a Docker container.
 - Run `mc alias set myminio http://ecommerce.minio:9000 minioadmin minioadmin123`.
 - Run `mc anonymous set public myminio/ecommerce`.
 5. Test api with BASE_URL is `http://localhost:8080/api/v1` or `http://app.lvh.me/api/v1`
+6. If you want to demo with frontend on React, visit `http://localhost:8005` on browser.
 
 ## Reference projects
 

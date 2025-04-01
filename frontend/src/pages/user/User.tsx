@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { usePagination } from '@hooks/usePagination'
 
 //components
+import ProtectedLayout from '@layouts/protected'
 import Pagination from '@components/Pagination'
 import UserItem from '@components/UserItem'
 import Skeleton from '@components/Skeleton'
@@ -38,26 +39,29 @@ const ListUsers = () => {
   if (isLoading) return <Skeleton />
 
   return (
-    <div className="h-screen px-40 mt-20">
-      <div className="overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users && users.items.map((user: IUser, index: number) => <UserItem key={`index-${index}`} user={user} />)}
-          </tbody>
-        </table>
-      </div>
+    <ProtectedLayout>
+      <div className="h-screen px-40 mt-20">
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users &&
+                users.items.map((user: IUser, index: number) => <UserItem key={`index-${index}`} user={user} />)}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="flex justify-center mt-10">
-        {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
+        <div className="flex justify-center mt-10">
+          {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
+        </div>
       </div>
-    </div>
+    </ProtectedLayout>
   )
 }
 

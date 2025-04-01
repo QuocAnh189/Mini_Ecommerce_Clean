@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { usePagination } from '@hooks/usePagination'
 
 //components
+import ProtectedLayout from '@layouts/protected'
 import OrderItem from '@components/OrderItem'
 import Pagination from '@components/Pagination'
 import Skeleton from '@components/Skeleton'
@@ -39,26 +40,28 @@ const Order = () => {
   if (isLoading) return <Skeleton />
 
   return (
-    <div className="h-screen flex flex-col items-center mt-20 gap-4">
-      <div className="overflow-x-auto px-40">
-        <table className="table table-zebra">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Code</th>
-              <th>Total Price</th>
-              <th>Status</th>
-              <th>Updated</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders &&
-              orders.items.map((order: IOrder, index: number) => <OrderItem key={`order-${index}`} order={order} />)}
-          </tbody>
-        </table>
+    <ProtectedLayout>
+      <div className="h-screen flex flex-col items-center mt-20 gap-4">
+        <div className="overflow-x-auto px-40">
+          <table className="table table-zebra">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders &&
+                orders.items.map((order: IOrder, index: number) => <OrderItem key={`order-${index}`} order={order} />)}
+            </tbody>
+          </table>
+        </div>
+        {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
       </div>
-      {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
-    </div>
+    </ProtectedLayout>
   )
 }
 

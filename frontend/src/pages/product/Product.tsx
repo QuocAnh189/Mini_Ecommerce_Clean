@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { usePagination } from 'hooks/usePagination'
 
 //components
+import ProtectedLayout from '@layouts/protected'
 import CardProduct from '@components/CardProduct'
 import Skeleton from '@components/Skeleton'
 import Pagination from '@components/Pagination'
@@ -41,15 +42,17 @@ const Product = () => {
   if (isLoading) return <Skeleton />
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-start px-10 py-5">
-        {products &&
-          products.items.map((product: IProduct, index: number) => (
-            <CardProduct key={`product-${index}`} product={product} />
-          ))}
+    <ProtectedLayout>
+      <div className="min-h-screen flex flex-col items-center bg-gray-100 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-start px-10 py-5">
+          {products &&
+            products.items.map((product: IProduct, index: number) => (
+              <CardProduct key={`product-${index}`} product={product} />
+            ))}
+        </div>
+        {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
       </div>
-      {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
-    </div>
+    </ProtectedLayout>
   )
 }
 
