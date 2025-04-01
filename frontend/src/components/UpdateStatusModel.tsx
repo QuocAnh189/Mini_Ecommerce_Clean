@@ -24,11 +24,12 @@ const UpdateStatusModel = (props: IProps) => {
     try {
       const result = await UpdateStatusOrder({ orderId, status })
       if (result) {
-        const modal = document.getElementById('update_status_modal') as HTMLDialogElement
+        const modal = document.getElementById(`update_status_modal_${orderId}`) as HTMLDialogElement
         modal.close()
         toast.success('Change status successfully.')
       }
     } catch (error) {
+      console.log(error)
       toast.error('Something went wrong.')
     }
   }

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 //interfaces
-import { IListOrderRequest, IOrder, PlaceOrderRequest } from '@interfaces/order'
+import { IListOrderRequest, IOrder, IPlaceOrderRequest } from '@interfaces/order'
 import { IListData } from '@interfaces/common'
 
 export const apiOrder = createApi({
@@ -22,7 +22,7 @@ export const apiOrder = createApi({
   tagTypes: ['Order'],
 
   endpoints: (builder) => ({
-    placeOrder: builder.mutation<IOrder, PlaceOrderRequest>({
+    placeOrder: builder.mutation<IOrder, IPlaceOrderRequest>({
       query: (data) => ({
         url: '/orders',
         method: 'POST',
