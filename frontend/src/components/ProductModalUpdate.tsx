@@ -6,40 +6,40 @@ import Loading from './Loading'
 import toast from 'react-hot-toast'
 
 //interfaces
-import { ICreateProductRequest } from '@interfaces/product'
+import { IUpdateProductRequest } from '@interfaces/product'
 
 //redux
-import { useCreateProductMutation } from '@redux/services/product'
+import { useUpdateProductMutation } from '@redux/services/product'
 
-const initForm: ICreateProductRequest = {
-  name: '',
-  description: '',
-  image: null,
-  price: 0,
+interface IProps {
+  image_url: string
+  product: IUpdateProductRequest
 }
-const ProductModalCreate = () => {
-  const [form, setForm] = useState<ICreateProductRequest>(initForm)
 
-  const [CreateProduct, { isLoading }] = useCreateProductMutation()
+const ProductModalUpdate = (props: IProps) => {
+  const { image_url, product } = props
+  const [form, setForm] = useState<IUpdateProductRequest>({ ...product, image: null })
+  const [UpdateProduct, { isLoading }] = useUpdateProductMutation()
+
   const handleChangeForm = (name: string, value: string) => {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleCreateProduct = async () => {
+  const handleUpdateProduct = async () => {
     const formData = new FormData()
+    formData.append('id', product.id)
     formData.append('name', form.name)
     formData.append('description', form.description)
     formData.append('image', form.image)
     formData.append('price', form.price.toString())
 
     try {
-      const result = await CreateProduct(formData).unwrap()
+      const result = await UpdateProduct(formData).unwrap()
 
       if (result) {
-        const modal = document.getElementById('create_product_modal') as HTMLDialogElement
+        const modal = document.getElementById(`update_product_modal_${product.id}`) as HTMLDialogElement
         modal.close()
-        setForm(initForm)
-        toast.success('Create product successfully.')
+        toast.success('Update product successfully.')
       }
     } catch (e: any) {
       toast.error('Something went wrong.')
@@ -47,13 +47,14 @@ const ProductModalCreate = () => {
   }
 
   return (
-    <dialog id="create_product_modal" className="modal">
+    <dialog id={`update_product_modal_${product.id}`} className="modal">
       <div className="modal-box">
         <h3 className="text-lg font-bold">Add Product</h3>
         <p className="py-4">Please full fill information</p>
         <form className="flex flex-col gap-4">
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Image</legend>
+            {image_url && <img src={image_url} alt="" className="w-full h-[100px] object-cover" />}
             <input
               type="file"
               id="image"
@@ -113,8 +114,8 @@ const ProductModalCreate = () => {
         </form>
         <div className="modal-action">
           <form method="dialog" className="flex gap-4">
-            <button onClick={handleCreateProduct} className="btn btn-success">
-              {isLoading ? <Loading /> : 'Create'}
+            <button onClick={handleUpdateProduct} className="btn btn-success">
+              {isLoading ? <Loading /> : 'Update'}
             </button>
             <button className="btn">Close</button>
           </form>
@@ -124,4 +125,4 @@ const ProductModalCreate = () => {
   )
 }
 
-export default ProductModalCreate
+export default ProductModalUpdate

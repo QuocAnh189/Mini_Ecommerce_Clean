@@ -27,6 +27,7 @@ export interface ICreateProductRequest {
 }
 
 export interface IUpdateProductRequest {
+  id: string
   name: string
   description: string
   image: any

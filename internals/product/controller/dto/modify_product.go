@@ -10,6 +10,7 @@ type CreateProductRequest struct {
 }
 
 type UpdateProductRequest struct {
+	ID          string                `form:"id" binding:"required"`
 	Name        string                `form:"name,omitempty"`
 	Description string                `form:"description,omitempty"`
 	Image       *multipart.FileHeader `form:"image,omitempty" swaggerignore:"true"`

@@ -16,7 +16,7 @@ type IProductUseCase interface {
 	ListProducts(ctx context.Context, req *dto.ListProductRequest) ([]*entity.Product, *paging.Pagination, error)
 	GetProductById(ctx context.Context, id string) (*entity.Product, error)
 	CreateProduct(ctx context.Context, req *dto.CreateProductRequest) error
-	UpdateProduct(ctx context.Context, id string, req *dto.UpdateProductRequest) error
+	UpdateProduct(ctx context.Context, req *dto.UpdateProductRequest) error
 	DeleteProduct(ctx context.Context, id string) error
 }
 
@@ -81,20 +81,23 @@ func (pu *ProductUseCase) CreateProduct(ctx context.Context, req *dto.CreateProd
 	return nil
 }
 
-func (pu *ProductUseCase) UpdateProduct(ctx context.Context, id string, req *dto.UpdateProductRequest) error {
+func (pu *ProductUseCase) UpdateProduct(ctx context.Context, req *dto.UpdateProductRequest) error {
 	if err := pu.validator.ValidateStruct(req); err != nil {
 		return err
 	}
 
-	product, err := pu.productRepo.GetProductById(ctx, id)
+	product, err := pu.productRepo.GetProductById(ctx, req.ID)
 	if err != nil {
 		logger.Errorf("Get fail, error: %s", err)
 		return err
 	}
 
+	logger.Infof("Image before update: %v", req.Image)
 	utils.MapStruct(product, req)
 
-	if req.Image != nil {
+	logger.Infof("Product before update: %v", product)
+
+	if req.Image.Filename != "" {
 		avatarURL, err := pu.minioClient.UploadFile(ctx, req.Image, "products")
 		if err != nil {
 			logger.Errorf("Failed to upload avatar: %s", err)
@@ -108,7 +111,7 @@ func (pu *ProductUseCase) UpdateProduct(ctx context.Context, id string, req *dto
 
 	err = pu.productRepo.UpdateProduct(ctx, product)
 	if err != nil {
-		logger.Errorf("Update fail, id: %s, error: %s", id, err)
+		logger.Errorf("Update fail, id: %s, error: %s", req.ID, err)
 		return err
 	}
 

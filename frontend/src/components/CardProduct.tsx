@@ -1,5 +1,6 @@
 //components
 import toast from 'react-hot-toast'
+import ProductModalUpdate from './ProductModalUpdate'
 
 //icon
 import { SlHandbag } from 'react-icons/sl'
@@ -13,7 +14,9 @@ import formatNumber from '@utils/formatNumber'
 
 //redux
 import { useAddProductToCartMutation } from '@redux/services/cart'
+import { useDeleteProductMutation } from '@redux/services/product'
 import { useAppSelector } from '@redux/hook'
+import Loading from './Loading'
 
 interface IProps {
   product: IProduct
@@ -24,7 +27,9 @@ const CardProduct = (props: IProps) => {
 
   const userId = JSON.parse(localStorage.getItem('user')!).id
   const cartId = useAppSelector((state) => state.cart.cartId)
+
   const [AddProductToCart] = useAddProductToCartMutation()
+  const [DeleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation()
 
   const handleAddProductToCart = async () => {
     const data: IAddProductRequest = {
@@ -43,22 +48,58 @@ const CardProduct = (props: IProps) => {
     }
   }
 
+  const handleDeleteProduct = async () => {
+    try {
+      const result = await DeleteProduct(product.id).unwrap()
+      if (result) {
+        toast.success('Delete product successfully.')
+      }
+    } catch {
+      toast.error('Something went wrong.')
+    }
+  }
+
   return (
-    <div className="h-[400px] border border-gray-300 rounded-md hover:cursor-pointer z-10">
+    <div className="h-[400px] border border-gray-300 rounded-md hover:cursor-pointer">
       <img src={product.image_url} alt="" className="w-full h-3/5 z-[1] object-cover" />
-      <div className="p-4 h-2/5 flex items-center justify-between">
-        <div>
-          <p className="text-black font-bold">{product.name}</p>
-          <p className="text-gray-500 font-medium text-ellipsis">{product.description}</p>
-          <p className="text-black">{formatNumber(product.price)} VND</p>
+      <div className="p-4 h-2/5 flex flex-col items-center justify-between">
+        <div className="flex items-center justify-between w-full">
+          <div>
+            <p className="text-black font-bold">{product.name}</p>
+            <p className="text-gray-500 font-medium text-ellipsis">{product.description}</p>
+            <p className="text-black">{formatNumber(product.price)} VND</p>
+          </div>
+          <div
+            onClick={handleAddProductToCart}
+            className="bg-gray-300 p-3 rounded-full hover:bg-gray-400 flex items-center gap-2"
+          >
+            +<SlHandbag />
+          </div>
         </div>
-        <div
-          onClick={handleAddProductToCart}
-          className="bg-gray-300 p-3 rounded-full hover:bg-gray-400 flex items-center gap-2"
-        >
-          +<SlHandbag />
+        <div className="w-full flex items-center justify-between">
+          <button
+            onClick={() =>
+              (document?.getElementById(`update_product_modal_${product.id}`) as HTMLDialogElement).showModal()
+            }
+            className="btn btn-info"
+          >
+            Update
+          </button>
+          <button onClick={handleDeleteProduct} className="btn btn-error">
+            {loadingDelete ? <Loading /> : 'Delete'}
+          </button>
         </div>
       </div>
+      <ProductModalUpdate
+        product={{
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          image: null,
+          price: product.price,
+        }}
+        image_url={product.image_url}
+      />
     </div>
   )
 }

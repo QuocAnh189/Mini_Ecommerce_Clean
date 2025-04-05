@@ -47,7 +47,9 @@ const CartItem = (props: IProps) => {
             <IoAdd />
           </button>
         </div>
-        <p className="w-[200px] font-semibold text-center">{formatNumber(cartLine.price)} VND</p>
+        <p className="w-[200px] font-semibold text-center">
+          {formatNumber(cartLine.product.price * cartLine.quantity)} VND
+        </p>
         <button
           onClick={() => onRemove(cartLine.product.id)}
           className="absolute right-0 p-2 rounded-full bg-gray-300 hover:bg-gray-400 hover:cursor-pointer"

@@ -183,8 +183,13 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	}
 
 	productId := c.Param("id")
+	if productId != req.ID {
+		logger.Error("Product ID mismatch", nil)
+		response.Error(c, http.StatusBadRequest, nil, "Product ID mismatch")
+		return
+	}
 
-	if err := h.usecase.UpdateProduct(c, productId, &req); err != nil {
+	if err := h.usecase.UpdateProduct(c, &req); err != nil {
 		logger.Error("Failed to update product", err)
 		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
 		return
