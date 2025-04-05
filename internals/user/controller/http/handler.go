@@ -6,8 +6,9 @@ import (
 	"ecommerce_clean/pkgs/logger"
 	"ecommerce_clean/pkgs/response"
 	"ecommerce_clean/utils"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
@@ -20,20 +21,20 @@ func NewAuthHandler(usecase usecase.IUserUseCase) *AuthHandler {
 	}
 }
 
-//	@Summary		User Sign-Up
-//	@Description	Registers a new user with the provided details and returns access tokens along with user info if successful.
-//	@Tags			Auth
-//	@Accept			multipart/form-data
-//	@Produce		json
-//	@Param			email		formData	string					true	"User email (must be unique)"
-//	@Param			name		formData	string					true	"User name (must be unique)"
-//	@Param			password	formData	string					true	"User password"
-//	@Param			avatar		formData	file					false	"User avatar file"
-//	@Success		200			{object}	dto.SignUpResponse		"User successfully registered"
-//	@Failure		400			{object}	response.Response		"Bad Request - Invalid parameters"
-//	@Failure		409			{object}	response.Response		"Conflict - Email or Name already in use"
-//	@Failure		500			{object}	response.Response		"Internal Server Error - Failed to sign up"
-//	@Router			/auth/signup [post]
+// @Summary			User Sign-Up
+// @Description		Registers a new user with the provided details and returns access tokens along with user info if successful.
+// @Tags			Auth
+// @Accept			multipart/form-data
+// @Produce			json
+// @Param			email		formData	string					true	"User email (must be unique)"
+// @Param			name		formData	string					true	"User name (must be unique)"
+// @Param			password	formData	string					true	"User password"
+// @Param			avatar		formData	file					false	"User avatar file"
+// @Success			200			{object}	dto.SignUpResponse		"User successfully registered"
+// @Failure			400			{object}	response.Response		"Bad Request - Invalid parameters"
+// @Failure			409			{object}	response.Response		"Conflict - Email or Name already in use"
+// @Failure			500			{object}	response.Response		"Internal Server Error - Failed to sign up"
+// @Router			/auth/signup [post]
 func (h *AuthHandler) SignUp(c *gin.Context) {
 	var req dto.SignUpRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -64,17 +65,17 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 	response.JSON(c, http.StatusOK, res)
 }
 
-//	@Summary		User Sign-In
-//	@Description	Authenticates the user based on the provided credentials and returns access tokens and user info if successful.
-//	@Tags			Auth
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body	dto.SignInRequest	true	"User sign-in request"
-//	@Success		200		{object}	dto.SignInResponse	"Successfully signed in"
-//	@Failure		400		{object}	response.Response	"Bad Request - Invalid parameters"
-//	@Failure		409		{object}	response.Response	"Conflict - Wrong password or Email does not exist"
-//	@Failure		500		{object}	response.Response	"Internal Server Error - Failed to sign in"
-//	@Router			/auth/signin [post]
+// @Summary			User Sign-In
+// @Description		Authenticates the user based on the provided credentials and returns access tokens and user info if successful.
+// @Tags			Auth
+// @Accept			json
+// @Produce			json
+// @Param			request	body	dto.SignInRequest	true	"User sign-in request"
+// @Success			200		{object}	dto.SignInResponse	"Successfully signed in"
+// @Failure			400		{object}	response.Response	"Bad Request - Invalid parameters"
+// @Failure			409		{object}	response.Response	"Conflict - Wrong password or Email does not exist"
+// @Failure			500		{object}	response.Response	"Internal Server Error - Failed to sign in"
+// @Router			/auth/signin [post]
 func (h *AuthHandler) SignIn(c *gin.Context) {
 	var req dto.SignInRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -104,16 +105,16 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 	response.JSON(c, http.StatusOK, res)
 }
 
-//	@Summary		User Sign-Out
-//	@Description	Logs out the authenticated user by invalidating the current session token.
-//	@Tags			Auth
-//	@Produce		json
-//	@Success		200				{object}	response.Response	"User successfully logged out"
-//	@Failure		400				{object}	response.Response	"Bad Request - Missing Authorization header"
-//	@Failure		401				{object}	response.Response	"Unauthorized - Invalid or missing user ID"
-//	@Failure		500				{object}	response.Response	"Internal Server Error - Failed to sign out"
-//	@Router			/auth/signout [post]
-//	@Security		ApiKeyAuth
+// @Summary			User Sign-Out
+// @Description		Logs out the authenticated user by invalidating the current session token.
+// @Tags			Auth
+// @Produce			json
+// @Success			200				{object}	response.Response	"User successfully logged out"
+// @Failure			400				{object}	response.Response	"Bad Request - Missing Authorization header"
+// @Failure			401				{object}	response.Response	"Unauthorized - Invalid or missing user ID"
+// @Failure			500				{object}	response.Response	"Internal Server Error - Failed to sign out"
+// @Router			/auth/signout [post]
+// @Security		ApiKeyAuth
 func (h *AuthHandler) SignOut(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	if token == "" {
@@ -139,21 +140,21 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 	response.JSON(c, http.StatusOK, "Logout successfully")
 }
 
-//	@Summary		Get Users List
-//	@Description	Retrieves a paginated list of users based on search criteria.
-//	@Tags			Users
-//	@Produce		json
-//	@Param			search		query	string	false	"Search keyword for filtering users"
-//	@Param			page		query	int		false	"Page number for pagination"
-//	@Param			size		query	int		false	"Number of users per page"
-//	@Param			order_by	query	string	false	"Column name to sort by"
-//	@Param			order_desc	query	bool	false	"Sort in descending order (true/false)"
-//	@Param			take_all	query	bool	false	"Retrieve all users without pagination"
-//	@Success		200			{object}	response.Response	"Successfully retrieved users list"
-//	@Failure		400			{object}	response.Response	"Bad Request - Invalid query parameters"
-//	@Failure		500			{object}	response.Response	"Internal Server Error - Failed to get users"
-//	@Router			/users [get]
-//	@Security		ApiKeyAuth
+// @Summary			Get Users List
+// @Description		Retrieves a paginated list of users based on search criteria.
+// @Tags			Users
+// @Produce			json
+// @Param			search		query	string	false	"Search keyword for filtering users"
+// @Param			page		query	int		false	"Page number for pagination"
+// @Param			size		query	int		false	"Number of users per page"
+// @Param			order_by	query	string	false	"Column name to sort by"
+// @Param			order_desc	query	bool	false	"Sort in descending order (true/false)"
+// @Param			take_all	query	bool	false	"Retrieve all users without pagination"
+// @Success			200			{object}	response.Response	"Successfully retrieved users list"
+// @Failure			400			{object}	response.Response	"Bad Request - Invalid query parameters"
+// @Failure			500			{object}	response.Response	"Internal Server Error - Failed to get users"
+// @Router			/users [get]
+// @Security		ApiKeyAuth
 func (h *AuthHandler) GetUsers(c *gin.Context) {
 	var req dto.ListUserRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -175,17 +176,17 @@ func (h *AuthHandler) GetUsers(c *gin.Context) {
 	response.JSON(c, http.StatusOK, res)
 }
 
-//	@Summary		Get User Detail
-//	@Description	Retrieves detailed information of a specific user by ID.
-//	@Tags			Users
-//	@Produce		json
-//	@Param			id		path	string	true	"User ID"
-//	@Success		200		{object}	response.Response	"Successfully retrieved user details"
-//	@Failure		400		{object}	response.Response	"Bad Request - Invalid user ID format"
-//	@Failure		404		{object}	response.Response	"Not Found - User does not exist"
-//	@Failure		500		{object}	response.Response	"Internal Server Error - Failed to retrieve user details"
-//	@Router			/users/{id} [get]
-//	@Security		ApiKeyAuth
+// @Summary			Get User Detail
+// @Description		Retrieves detailed information of a specific user by ID.
+// @Tags			Users
+// @Produce			json
+// @Param			id		path	string	true	"User ID"
+// @Success			200		{object}	response.Response	"Successfully retrieved user details"
+// @Failure			400		{object}	response.Response	"Bad Request - Invalid user ID format"
+// @Failure			404		{object}	response.Response	"Not Found - User does not exist"
+// @Failure			500		{object}	response.Response	"Internal Server Error - Failed to retrieve user details"
+// @Router			/users/{id} [get]
+// @Security		ApiKeyAuth
 func (h *AuthHandler) GetUser(c *gin.Context) {
 	userId := c.Param("id")
 	user, err := h.usecase.GetUserById(c, userId)
@@ -198,17 +199,17 @@ func (h *AuthHandler) GetUser(c *gin.Context) {
 	response.JSON(c, http.StatusOK, user)
 }
 
-//	@Summary		Delete User
-//	@Description	Deletes a user from the database by ID.
-//	@Tags			Users
-//	@Produce		json
-//	@Param			id		path	string	true	"User ID"
-//	@Success		200		{object}	response.Response	"User successfully deleted"
-//	@Failure		400		{object}	response.Response	"Bad Request - Invalid user ID format"
-//	@Failure		404		{object}	response.Response	"Not Found - User does not exist"
-//	@Failure		500		{object}	response.Response	"Internal Server Error - Failed to delete user"
-//	@Router			/users/{id} [delete]
-//	@Security		ApiKeyAuth
+// @Summary			Delete User
+// @Description		Deletes a user from the database by ID.
+// @Tags			Users
+// @Produce			json
+// @Param			id		path	string	true	"User ID"
+// @Success			200		{object}	response.Response	"User successfully deleted"
+// @Failure			400		{object}	response.Response	"Bad Request - Invalid user ID format"
+// @Failure			404		{object}	response.Response	"Not Found - User does not exist"
+// @Failure			500		{object}	response.Response	"Internal Server Error - Failed to delete user"
+// @Router			/users/{id} [delete]
+// @Security		ApiKeyAuth
 func (h *AuthHandler) DeleteUser(c *gin.Context) {
 	userId := c.Param("id")
 

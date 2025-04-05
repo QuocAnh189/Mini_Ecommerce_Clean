@@ -6,6 +6,7 @@ import (
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/token"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -101,9 +102,9 @@ func (s Server) GetEngine() *gin.Engine {
 //	@license.name	MIT
 //	@license.url	https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
 
-//	@securityDefinitions.apikey	ApiKeyAuth
-//	@in							header
-//	@name						Authorization
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
 func (s Server) MapRoutes() error {
 	routesV1 := s.engine.Group("/api/v1")
 	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)

@@ -2,9 +2,10 @@ package entity
 
 import (
 	productEntity "ecommerce_clean/internals/product/entity"
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"time"
 )
 
 type CartLine struct {
