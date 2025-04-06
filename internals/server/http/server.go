@@ -7,6 +7,7 @@ import (
 	"ecommerce_clean/pkgs/token"
 	"fmt"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -35,6 +36,7 @@ type Server struct {
 	minioClient *minio.MinioClient
 	cache       redis.IRedis
 	tokenMarker token.IMarker
+	enforcer    *casbin.Enforcer
 }
 
 func NewServer(
@@ -43,6 +45,7 @@ func NewServer(
 	minioClient *minio.MinioClient,
 	cache redis.IRedis,
 	tokenMarker token.IMarker,
+	enforcer *casbin.Enforcer,
 ) *Server {
 	return &Server{
 		engine:      gin.Default(),
@@ -52,6 +55,7 @@ func NewServer(
 		minioClient: minioClient,
 		cache:       cache,
 		tokenMarker: tokenMarker,
+		enforcer:    enforcer,
 	}
 }
 
@@ -60,6 +64,11 @@ func (s Server) Run() error {
 	if s.cfg.Environment == configs.ProductionEnv {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	s.engine.Use(func(c *gin.Context) {
+		c.Set("enforcer", s.enforcer)
+		c.Next()
+	})
 
 	s.engine.Use(middlewares.PrometheusMiddleware())
 	s.engine.GET("/metrics", gin.WrapH(promhttp.Handler()))

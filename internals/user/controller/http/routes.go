@@ -36,8 +36,8 @@ func Routes(
 
 	userRouter := r.Group("/users").Use(authMiddleware)
 	{
-		userRouter.GET("", userHandler.GetUsers)
+		userRouter.GET("", middlewares.AuthorizePolicy("users", "read"), userHandler.GetUsers)
 		userRouter.GET("/:id", userHandler.GetUser)
-		userRouter.DELETE("/:id", userHandler.DeleteUser)
+		userRouter.DELETE("/:id", middlewares.AuthorizePolicy("users", "delete"), userHandler.DeleteUser)
 	}
 }

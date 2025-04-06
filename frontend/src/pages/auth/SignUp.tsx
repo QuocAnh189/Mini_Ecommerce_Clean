@@ -17,11 +17,15 @@ import { setAuth } from '@redux/slices/auth'
 //icons
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
+//constants
+import { ERole } from '@constants/enum'
+
 const initForm: SignUpRequest = {
   email: '',
   name: '',
   password: '',
   avatar: null,
+  role: ERole.CUSTOMER,
 }
 
 const SignUp = () => {
@@ -43,6 +47,7 @@ const SignUp = () => {
     formData.append('name', form.name)
     formData.append('password', form.password)
     formData.append('avatar', form.avatar)
+    formData.append('role', form.role)
 
     try {
       const result = await Register(formData).unwrap()
@@ -73,6 +78,19 @@ const SignUp = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               SignUp
             </h1>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Avatar</label>
+              <input
+                type="file"
+                name="avatar"
+                id="avatar"
+                className="w-full file-input"
+                onChange={(e: any) => {
+                  handleChangeForm('avatar', e.target.files[0])
+                }}
+              />
+            </div>
+
             <div className="space-y-4 md:space-y-6">
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Email</label>
@@ -82,7 +100,7 @@ const SignUp = () => {
                   name="email"
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
+                  placeholder="name@gmail.com"
                   onChange={(e) => {
                     handleChangeForm('email', e.target.value)
                   }}
@@ -102,6 +120,17 @@ const SignUp = () => {
                     handleChangeForm('name', e.target.value)
                   }}
                 />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+                <select
+                  onChange={(e) => handleChangeForm('role', e.target.value)}
+                  value={form.role}
+                  className="select w-full"
+                >
+                  <option value={ERole.ADMIN}>Admin</option>
+                  <option value={ERole.CUSTOMER}>Customer</option>
+                </select>
               </div>
 
               <div>
@@ -127,19 +156,6 @@ const SignUp = () => {
                     {showPassword ? <FiEye width={20} /> : <FiEyeOff width={20} />}
                   </button>
                 </div>
-              </div>
-
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Avatar</label>
-                <input
-                  type="file"
-                  name="avatar"
-                  id="avatar"
-                  className="w-full file-input"
-                  onChange={(e: any) => {
-                    handleChangeForm('avatar', e.target.files[0])
-                  }}
-                />
               </div>
 
               <button

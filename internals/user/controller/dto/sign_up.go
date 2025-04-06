@@ -8,6 +8,7 @@ type SignUpRequest struct {
 	Email    string                `form:"email" binding:"required,email"`
 	Name     string                `form:"name" binding:"required"`
 	Avatar   *multipart.FileHeader `form:"avatar"`
+	Role     string                `form:"role" binding:"required,oneof=admin customer"`
 	Password string                `form:"password" binding:"required"`
 }
 

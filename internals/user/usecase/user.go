@@ -14,6 +14,7 @@ import (
 	"ecommerce_clean/utils"
 	"errors"
 	"fmt"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -67,7 +68,7 @@ func (u *UserUseCase) SignIn(ctx context.Context, req *dto.SignInRequest) (strin
 	tokenData := token.AuthPayload{
 		ID:    user.ID,
 		Email: user.Email,
-		Role:  "",
+		Role:  user.Role,
 	}
 
 	accessToken := u.token.GenerateAccessToken(&tokenData)
@@ -104,7 +105,7 @@ func (u *UserUseCase) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 	tokenData := token.AuthPayload{
 		ID:    user.ID,
 		Email: user.Email,
-		Role:  "",
+		Role:  user.Role,
 	}
 
 	accessToken := u.token.GenerateAccessToken(&tokenData)

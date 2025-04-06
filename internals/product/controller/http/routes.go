@@ -31,8 +31,8 @@ func Routes(
 	{
 		productRoute.GET("", productHandler.GetProducts)
 		productRoute.GET("/:id", productHandler.GetProduct)
-		productRoute.POST("", productHandler.CreateProduct)
-		productRoute.PUT("/:id", productHandler.UpdateProduct)
-		productRoute.DELETE("/:id", productHandler.DeleteProduct)
+		productRoute.POST("", middlewares.AuthorizePolicy("products", "write"), productHandler.CreateProduct)
+		productRoute.PUT("/:id", middlewares.AuthorizePolicy("products", "write"), productHandler.UpdateProduct)
+		productRoute.DELETE("/:id", middlewares.AuthorizePolicy("products", "delete"), productHandler.DeleteProduct)
 	}
 }

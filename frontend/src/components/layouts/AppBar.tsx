@@ -10,9 +10,17 @@ import CartIcon from '@components/CartIcon'
 //image
 import logo from '@assets/images/logo.png'
 
+//interfaces
+import { IUser } from '@interfaces/user'
+
+//constants
+import { ERole } from '@constants/enum'
+
 const AppBar = () => {
   const navigate = useNavigate()
   const location = useLocation()
+
+  const user: IUser = JSON.parse(localStorage.getItem('user') || '{}')
 
   const [search, setSearch] = useState('')
   const debouncedSearchTerm = useDebounce(search, 500)
@@ -41,12 +49,14 @@ const AppBar = () => {
         />
       </div>
 
-      <button
-        className="btn btn-info"
-        onClick={() => (document?.getElementById('create_product_modal') as HTMLDialogElement).showModal()}
-      >
-        <p className="text-white">Add Product</p>
-      </button>
+      {user.role === ERole.ADMIN && (
+        <button
+          className="btn btn-info"
+          onClick={() => (document?.getElementById('create_product_modal') as HTMLDialogElement).showModal()}
+        >
+          <p className="text-white">Add Product</p>
+        </button>
+      )}
 
       <CartIcon />
 

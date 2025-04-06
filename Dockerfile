@@ -15,6 +15,7 @@ RUN mkdir -p /bin && \
 
 # Step 3: Final
 FROM alpine:latest
+COPY --from=builder /app/policy /policy
 COPY --from=builder /app/configs /configs
 COPY --from=builder /bin/app /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

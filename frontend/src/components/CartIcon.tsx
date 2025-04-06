@@ -34,11 +34,13 @@ const CartIcon = () => {
       <div className="flex items-center gap-2 hover:cursor-pointer" onClick={navigateCartScreen}>
         <div className="relative">
           <IoCartOutline size="32px" />
-          <div className="bg-primary w-4 h-4 rounded-full absolute top-0 right-0">
-            <p className="flex items-center justify-center text-sm text-white bg-green-600 rounded-full">
-              {cart && cart.lines.length}
-            </p>
-          </div>
+          {cart && (
+            <div className="bg-primary w-4 h-4 rounded-full absolute top-0 right-0">
+              <p className="flex items-center justify-center text-sm text-white bg-green-600 rounded-full">
+                {cart.lines.length}
+              </p>
+            </div>
+          )}
         </div>
         <div
           className={`flex flex-col items-start hover:underline ${

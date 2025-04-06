@@ -4,3 +4,8 @@ export enum EStatusOrder {
   DONE = 'done',
   CANCELED = 'canceled',
 }
+
+export enum ERole {
+  CUSTOMER = 'customer',
+  ADMIN = 'admin',
+}

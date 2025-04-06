@@ -23,7 +23,16 @@ const UserItem = (props: IProps) => {
         </div>
       </td>
       <td>{user.email}</td>
-      <td className="flex items-center gap-2">
+      <td className="">
+        <p
+          className={`${
+            user.role === 'admin' ? 'bg-error' : 'bg-info'
+          } inline-block p-1 rounded-md text-white font-medium`}
+        >
+          {user.role}
+        </p>
+      </td>
+      <td className="flex h-20 items-center gap-2">
         {!user.deleted_at ? (
           <>
             <div aria-label="success" className="status status-success"></div>

@@ -1,13 +1,15 @@
 //components
 import toast from 'react-hot-toast'
+import Loading from './Loading'
 import ProductModalUpdate from './ProductModalUpdate'
-
-//icon
-import { SlHandbag } from 'react-icons/sl'
 
 //interfaces
 import { IProduct } from '@interfaces/product'
 import { IAddProductRequest } from '@interfaces/cart'
+import { IUser } from '@interfaces/user'
+
+//constants
+import { ERole } from '@constants/enum'
 
 //util
 import formatNumber from '@utils/formatNumber'
@@ -16,7 +18,9 @@ import formatNumber from '@utils/formatNumber'
 import { useAddProductToCartMutation } from '@redux/services/cart'
 import { useDeleteProductMutation } from '@redux/services/product'
 import { useAppSelector } from '@redux/hook'
-import Loading from './Loading'
+
+//icon
+import { SlHandbag } from 'react-icons/sl'
 
 interface IProps {
   product: IProduct
@@ -25,10 +29,10 @@ interface IProps {
 const CardProduct = (props: IProps) => {
   const { product } = props
 
-  const userId = JSON.parse(localStorage.getItem('user')!).id
+  const user: IUser = JSON.parse(localStorage.getItem('user')!)
   const cartId = useAppSelector((state) => state.cart.cartId)
 
-  const [AddProductToCart] = useAddProductToCartMutation()
+  const [AddProductToCart, { isLoading: loadingAdd }] = useAddProductToCartMutation()
   const [DeleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation()
 
   const handleAddProductToCart = async () => {
@@ -39,7 +43,7 @@ const CardProduct = (props: IProps) => {
     }
 
     try {
-      const result = await AddProductToCart({ userId, data }).unwrap()
+      const result = await AddProductToCart({ userId: user.id, data }).unwrap()
       if (result) {
         toast.success('Add product to cart successfully.')
       }
@@ -73,33 +77,37 @@ const CardProduct = (props: IProps) => {
             onClick={handleAddProductToCart}
             className="bg-gray-300 p-3 rounded-full hover:bg-gray-400 flex items-center gap-2"
           >
-            +<SlHandbag />
+            {loadingAdd ? <Loading /> : <SlHandbag />}
           </div>
         </div>
-        <div className="w-full flex items-center justify-between">
-          <button
-            onClick={() =>
-              (document?.getElementById(`update_product_modal_${product.id}`) as HTMLDialogElement).showModal()
-            }
-            className="btn btn-info"
-          >
-            Update
-          </button>
-          <button onClick={handleDeleteProduct} className="btn btn-error">
-            {loadingDelete ? <Loading /> : 'Delete'}
-          </button>
-        </div>
+        {user.role === ERole.ADMIN && (
+          <div className="w-full flex items-center justify-between">
+            <button
+              onClick={() =>
+                (document?.getElementById(`update_product_modal_${product.id}`) as HTMLDialogElement).showModal()
+              }
+              className="btn btn-info"
+            >
+              Update
+            </button>
+            <button onClick={handleDeleteProduct} className="btn btn-error">
+              {loadingDelete ? <Loading /> : 'Delete'}
+            </button>
+          </div>
+        )}
       </div>
-      <ProductModalUpdate
-        product={{
-          id: product.id,
-          name: product.name,
-          description: product.description,
-          image: null,
-          price: product.price,
-        }}
-        image_url={product.image_url}
-      />
+      {user.role === ERole.ADMIN && (
+        <ProductModalUpdate
+          product={{
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            image: null,
+            price: product.price,
+          }}
+          image_url={product.image_url}
+        />
+      )}
     </div>
   )
 }

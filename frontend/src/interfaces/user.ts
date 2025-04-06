@@ -1,8 +1,11 @@
+import { ERole } from '@constants/enum'
+
 export interface IUser {
   id: string
   email: string
   name: string
   avatar_url: string
+  role: ERole
   created_at: string
   updated_at: string
   deleted_at: string
@@ -24,6 +27,7 @@ export interface SignUpRequest {
   name: string
   avatar: any
   password: string
+  role: ERole
 }
 
 export interface IListUserRequest {

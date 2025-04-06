@@ -92,12 +92,11 @@ func (pu *ProductUseCase) UpdateProduct(ctx context.Context, req *dto.UpdateProd
 		return err
 	}
 
-	logger.Infof("Image before update: %v", req.Image)
 	utils.MapStruct(product, req)
 
-	logger.Infof("Product before update: %v", product)
+	logger.Infof("Product image update: %v", req.Image)
 
-	if req.Image.Filename != "" {
+	if req.Image != nil && req.Image.Filename != "" {
 		avatarURL, err := pu.minioClient.UploadFile(ctx, req.Image, "products")
 		if err != nil {
 			logger.Errorf("Failed to upload avatar: %s", err)

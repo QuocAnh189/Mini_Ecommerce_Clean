@@ -3,9 +3,10 @@ package entity
 import (
 	cartEntity "ecommerce_clean/internals/cart/entity"
 	"ecommerce_clean/utils"
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"time"
 )
 
 type User struct {
@@ -14,6 +15,7 @@ type User struct {
 	Name      string          `json:"name" gorm:"uniqueIndex:unique_user_name;not null"`
 	AvatarUrl string          `json:"avatar_url" gorm:"unique:unique_user_avatar;not null"`
 	Password  string          `json:"password" gorm:"not null;"`
+	Role      string          `json:"role" gorm:"default:'customer';not null"`
 	CreatedAt time.Time       `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time       `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt *gorm.DeletedAt `json:"deleted_at" gorm:"index"`

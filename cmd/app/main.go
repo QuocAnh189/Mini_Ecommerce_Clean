@@ -3,6 +3,7 @@ package main
 import (
 	"ecommerce_clean/configs"
 	"ecommerce_clean/db"
+	"ecommerce_clean/pkgs/casbin"
 	"ecommerce_clean/pkgs/logger"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/redis"
@@ -28,14 +29,18 @@ func main() {
 		logger.Fatal("Cannot connect to database", err)
 	}
 
+	enforcer, err := casbin.InitCasbinEnforcer(database)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
 	if err := database.AutoMigrate(
 		&userEntity.User{},
 		&productEntity.Product{},
 		&orderEntity.Order{},
 		&orderEntity.OrderLine{},
 		&cartEntity.Cart{},
-		&cartEntity.CartLine{});
-		err != nil {
+		&cartEntity.CartLine{}); err != nil {
 		logger.Fatal("Database migration fail", err)
 	}
 
@@ -64,7 +69,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker)
+	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker, enforcer)
 
 	wg.Add(1)
 
