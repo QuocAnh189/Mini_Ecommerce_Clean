@@ -7,14 +7,14 @@ import { useDebounce } from '@hooks/useDebounce'
 import ProductModalCreate from '@components/ProductModalCreate'
 import CartIcon from '@components/CartIcon'
 
-//image
-import logo from '@assets/images/logo.png'
-
 //interfaces
 import { IUser } from '@interfaces/user'
 
 //constants
 import { ERole } from '@constants/enum'
+
+//assets
+import logo from '@assets/images/logo.png'
 
 const AppBar = () => {
   const navigate = useNavigate()

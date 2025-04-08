@@ -1,4 +1,4 @@
-//image
+//assets
 import logo from '@assets/images/logo.png'
 import applePay from '@assets/images/applePay.png'
 import visaPay from '@assets/images/visa.png'

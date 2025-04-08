@@ -29,7 +29,6 @@ const UpdateStatusModel = (props: IProps) => {
         toast.success('Change status successfully.')
       }
     } catch (error) {
-      console.log(error)
       toast.error('Something went wrong.')
     }
   }

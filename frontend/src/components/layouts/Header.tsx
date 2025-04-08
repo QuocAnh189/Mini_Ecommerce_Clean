@@ -1,11 +1,11 @@
-//hook
+//hooks
 import { useLocation, useNavigate } from 'react-router-dom'
 
-//component
+//components
 import toast from 'react-hot-toast'
 import Loading from '@components/Loading'
 
-//interface
+//interfaces
 import { IUser } from '@interfaces/user'
 
 //redux

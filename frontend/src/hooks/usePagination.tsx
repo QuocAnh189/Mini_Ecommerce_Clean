@@ -1,4 +1,4 @@
-//hook
+//hooks
 import { useState } from 'react'
 
 export const usePagination = (totalCount: number = 0, itemsPerPage: number = 10) => {

@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 
-//service
+//services
 import { apiAuth } from './services/auth'
 import { apiUser } from './services/user'
 import { apiProduct } from './services/product'
 import { apiCart } from './services/cart'
 import { apiOrder } from './services/order'
 
-//slice
+//slices
 import authReducer, { AuthSliceKey } from './slices/auth'
 import cartReducer, { CartSliceKey } from './slices/cart'
 

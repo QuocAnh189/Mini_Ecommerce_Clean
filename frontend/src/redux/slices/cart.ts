@@ -1,3 +1,4 @@
+//redux
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 export const CartSliceKey = 'cart'

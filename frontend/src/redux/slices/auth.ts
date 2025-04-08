@@ -1,4 +1,7 @@
+//redux
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+
+//interfaces
 import { IAuth } from '@interfaces/user'
 
 export const AuthSliceKey = 'auth'

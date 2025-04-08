@@ -8,7 +8,7 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
-//image
+//assets
 import image1 from '@assets/images/BG1.png'
 import image2 from '@assets/images/BG2.png'
 import image3 from '@assets/images/BG3.png'
