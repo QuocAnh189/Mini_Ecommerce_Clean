@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "70f3c281-d52c-4f5a-a73e-25aff78089c5",
+		"name": "Order",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30937098",
+		"_collection_link": "https://micro8.postman.co/workspace/Go_Ecommerce_Clean~f7fb6ca7-d546-4818-b3e3-711b7d524579/collection/30937098-70f3c281-d52c-4f5a-a73e-25aff78089c5?action=share&source=collection_link&creator=30937098"
+	},
+	"item": [
+		{
+			"name": "Place Orders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": \"4b58a45b-fdaa-4f58-96ce-d053ea34600d\",\r\n    \"lines\": [\r\n        {\r\n            \"product_id\": \"4056e593-4d6e-4715-bb46-8f9b9b09624b\",\r\n            \"quantity\": 1\r\n        },\r\n        {\r\n            \"product_id\": \"37776b00-6004-49c2-bb28-cf2bdb540d33\",\r\n            \"quantity\": 2\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BASE_URL}}/orders"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/orders?user_id=&code=&status=&page=&size=&order_by=&order_desc=",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": ""
+						},
+						{
+							"key": "code",
+							"value": ""
+						},
+						{
+							"key": "status",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "size",
+							"value": ""
+						},
+						{
+							"key": "order_by",
+							"value": ""
+						},
+						{
+							"key": "order_desc",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/orders/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"orders",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Status",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/orders/:id/:status",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"orders",
+						":id",
+						":status"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						},
+						{
+							"key": "status",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

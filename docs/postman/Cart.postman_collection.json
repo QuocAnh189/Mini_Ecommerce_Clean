@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "6db5b989-9c55-49a9-957f-af36c7e12bb9",
+		"name": "Cart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30937098",
+		"_collection_link": "https://micro8.postman.co/workspace/Go_Ecommerce_Clean~f7fb6ca7-d546-4818-b3e3-711b7d524579/collection/30937098-6db5b989-9c55-49a9-957f-af36c7e12bb9?action=share&source=collection_link&creator=30937098"
+	},
+	"item": [
+		{
+			"name": "Get Card",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/carts/:userID",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"carts",
+						":userID"
+					],
+					"variable": [
+						{
+							"key": "userID",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product To Cart",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cart_id\": \"\",\r\n    \"product_id\": \"\",\r\n    \"quantity\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/carts/:userID",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"carts",
+						":userID"
+					],
+					"variable": [
+						{
+							"key": "userID",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Product From Cart",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cart_id\": \"\",\r\n    \"product_id\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/carts/:userID",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"carts",
+						":userID"
+					],
+					"variable": [
+						{
+							"key": "userID",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update CartLine",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"\",\r\n    \"cart_id\": \"\",\r\n    \"product_id\": \"\",\r\n    \"quantity\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/carts/cart-line/:userID",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"carts",
+						"cart-line",
+						":userID"
+					],
+					"variable": [
+						{
+							"key": "userID",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

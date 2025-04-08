@@ -1,0 +1,103 @@
+{
+	"info": {
+		"_postman_id": "3662cfdd-2c1e-4123-84d5-0fafa604ede0",
+		"name": "Auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30937098",
+		"_collection_link": "https://micro8.postman.co/workspace/Go_Ecommerce_Clean~f7fb6ca7-d546-4818-b3e3-711b7d524579/collection/30937098-3662cfdd-2c1e-4123-84d5-0fafa604ede0?action=share&source=collection_link&creator=30937098"
+	},
+	"item": [
+		{
+			"name": "SignIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = JSON.parse(pm.response.text());\r",
+							"pm.environment.set(\"TOKEN\", json.data.accessToken);\r",
+							"pm.environment.set(\"REFRESH_TOKEN\", json.data.refreshToken);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"\",\r\n    \"password\": \"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{BASE_URL}}/auth/signin"
+			},
+			"response": []
+		},
+		{
+			"name": "SignUp",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "avatar",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "role",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{BASE_URL}}/auth/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "SignOut",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{TOKEN}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"url": "{{BASE_URL}}/auth/signout"
+			},
+			"response": []
+		}
+	]
+}
