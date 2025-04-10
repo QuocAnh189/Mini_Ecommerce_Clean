@@ -1,6 +1,8 @@
 services:
   ecommerce.frontend:
     container_name: ecommerce.frontend
+    env_file:
+      - .env
     build:
       context: ./frontend
     ports:
@@ -49,10 +51,12 @@ services:
   ecommerce.db:
     image: postgres:16
     container_name: ecommerce.db
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: ecommerce_clean
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - '5433:5432'
     volumes:
@@ -62,20 +66,24 @@ services:
   ecommerce.redis:
     image: redis:latest
     container_name: ecommerce.redis
+    env_file:
+      - .env
     restart: unless-stopped
     ports:
       - '6389:6379'
     volumes:
       - ecommerce_redis_data:/data
     environment:
-      REDIS_PASSWORD: password
-      REDIS_PORT: 6379
-      REDIS_DATABASES: 1
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DATABASES: ${REDIS_DB}
     command: ['redis-server', '--appendonly', 'yes', '--requirepass', 'password']
 
   ecommerce.minio:
     image: minio/minio:latest
     container_name: ecommerce.minio
+    env_file:
+      - .env
     ports:
       - '9000:9000' # MinIO API
       - '9001:9001' # MinIO Console
@@ -84,8 +92,8 @@ services:
       - ecommerce_minio_data:/data
       - ecommerce_minio_config:/root/.minio
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
 
   ecommerce.nginx:
