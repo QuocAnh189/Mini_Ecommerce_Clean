@@ -6,7 +6,9 @@
 build
 tmp
 grafana
+.env
 app.env
+docker.env
 credentials.json
 
 

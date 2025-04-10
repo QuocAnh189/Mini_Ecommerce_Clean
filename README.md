@@ -59,6 +59,7 @@ Using the principles of Robert Martin (aka Uncle Bob).
 - [Logging](https://github.com/uber-go/zap)
 - [Jwt-Go](https://github.com/golang-jwt/jwt)
 - [Casbin](https://github.com/casbin/casbin)
+- [Mailer](https://github.com/go-gomail/gomail)
 - [Redis](https://github.com/redis/go-redis)
 - [Minio](https://github.com/minio/minio-go)
 - [Docker](https://www.docker.com/)
@@ -114,19 +115,20 @@ Contains configuration files and dashboards for monitoring application metrics u
 
 Holds configuration files for Prometheus, which collects and stores metrics from the application for monitoring and alerting.
 
-## How to run application (Docker)
+## How to run application with Docker (Recommend)
 
 1. Clone the repo and cd into it
 2. Set mode `LF` (not `CRLF`) for entrypoint.sh file
-3. Run `docker-compose up --build -d` local dev environment
-4. Setup minio container.
+3. Copy `.env.example` (not `app.example.env`) file to `.env` file and update your `env variables`
+4. Run `docker-compose up --build -d` local dev environment
+5. Setup minio container.
 
 - Run `docker exect -it <container_id of ecommerce.minio> sh`.
 - Run `mc alias set myminio http://ecommerce.minio:9000 minioadmin minioadmin123`.
 - Run `mc anonymous set public myminio/ecommerce`.
 
-5. Test api with BASE_URL is `http://localhost:8080/api/v1` or `http://app.lvh.me/api/v1`
-6. If you want to demo with frontend on React, visit `http://localhost:8005` on browser.
+6. Test api with BASE_URL is `http://localhost:8080/api/v1` or `http://app.lvh.me/api/v1`
+7. If you want to demo with Frontend on React, visit `http://localhost:8005` on browser.
 
 ## Reference projects
 
