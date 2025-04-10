@@ -23,13 +23,13 @@ type IProductUseCase interface {
 type ProductUseCase struct {
 	validator   validation.Validation
 	productRepo repository.IProductRepository
-	minioClient *minio.MinioClient
+	minioClient minio.IUploadService
 }
 
 func NewProductUseCase(
 	validator validation.Validation,
 	productRepo repository.IProductRepository,
-	minioClient *minio.MinioClient,
+	minioClient minio.IUploadService,
 ) *ProductUseCase {
 	return &ProductUseCase{
 		validator:   validator,

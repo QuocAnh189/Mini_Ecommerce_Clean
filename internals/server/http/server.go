@@ -2,6 +2,7 @@ package http
 
 import (
 	_ "ecommerce_clean/docs"
+	"ecommerce_clean/pkgs/mail"
 	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/token"
@@ -33,18 +34,20 @@ type Server struct {
 	cfg         *configs.Config
 	validator   validation.Validation
 	db          db.IDatabase
-	minioClient *minio.MinioClient
+	minioClient minio.IUploadService
 	cache       redis.IRedis
 	tokenMarker token.IMarker
+	mailer      mail.IMailer
 	enforcer    *casbin.Enforcer
 }
 
 func NewServer(
 	validator validation.Validation,
 	db db.IDatabase,
-	minioClient *minio.MinioClient,
+	minioClient minio.IUploadService,
 	cache redis.IRedis,
 	tokenMarker token.IMarker,
+	mailer mail.IMailer,
 	enforcer *casbin.Enforcer,
 ) *Server {
 	return &Server{
@@ -55,6 +58,7 @@ func NewServer(
 		minioClient: minioClient,
 		cache:       cache,
 		tokenMarker: tokenMarker,
+		mailer:      mailer,
 		enforcer:    enforcer,
 	}
 }
@@ -116,7 +120,7 @@ func (s Server) GetEngine() *gin.Engine {
 // @name						Authorization
 func (s Server) MapRoutes() error {
 	routesV1 := s.engine.Group("/api/v1")
-	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
+	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.mailer, s.tokenMarker)
 	productHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
 	cartHttp.Routes(routesV1, s.db, s.validator, s.cache, s.tokenMarker)
 	orderHttp.Routes(routesV1, s.db, s.validator, s.cache, s.tokenMarker)

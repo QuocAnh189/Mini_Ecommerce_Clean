@@ -32,6 +32,11 @@ type Config struct {
 	RedisURI             string        `mapstructure:"REDIS_URI"`
 	RedisPassword        string        `mapstructure:"REDIS_PASSWORD"`
 	RedisDB              int           `mapstructure:"REDIS_DB"`
+	MailHost             string        `mapstructure:"MAIL_HOST"`
+	MailPort             int           `mapstructure:"MAIL_PORT"`
+	MailUser             string        `mapstructure:"MAIL_USER"`
+	MailPassword         string        `mapstructure:"MAIL_PASSWORD"`
+	MailFrom             string        `mapstructure:"MAIL_FROM"`
 }
 
 var (
@@ -66,6 +71,11 @@ func LoadConfig() *Config {
 		RedisURI:             viper.GetString("REDIS_URI"),
 		RedisPassword:        viper.GetString("REDIS_PASSWORD"),
 		RedisDB:              viper.GetInt("REDIS_DB"),
+		MailHost:             viper.GetString("MAIL_HOST"),
+		MailPort:             viper.GetInt("MAIL_PORT"),
+		MailUser:             viper.GetString("MAIL_USER"),
+		MailPassword:         viper.GetString("MAIL_PASSWORD"),
+		MailFrom:             viper.GetString("MAIL_FROM"),
 	}
 
 	if cfg.DatabaseURI == "" {

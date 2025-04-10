@@ -17,7 +17,7 @@ func Routes(
 	r *gin.RouterGroup,
 	sqlDB db.IDatabase,
 	validator validation.Validation,
-	minioClient *minio.MinioClient,
+	minioClient minio.IUploadService,
 	cache redis.IRedis,
 	token token.IMarker,
 ) {

@@ -13,8 +13,7 @@ func InitCasbinEnforcer(db db.IDatabase) (*casbin.Enforcer, error) {
 		return nil, err
 	}
 
-	// current working dir
-	//for local development
+	////for local development
 	// wd, err := os.Getwd()
 	// if err != nil {
 	// 	return nil, err
@@ -22,8 +21,7 @@ func InitCasbinEnforcer(db db.IDatabase) (*casbin.Enforcer, error) {
 
 	// modelPath := filepath.Join(wd, "policy/rbac_model.conf")
 
-	//for docker container
-	// modelPath := filepath.Join("/app", "policy/rbac_model.conf")
+	////for docker container
 	modelPath := "/policy/rbac_model.conf"
 
 	enforcer, err := casbin.NewEnforcer(modelPath, adapter)

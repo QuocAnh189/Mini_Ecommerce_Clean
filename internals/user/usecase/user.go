@@ -6,6 +6,7 @@ import (
 	"ecommerce_clean/internals/user/entity"
 	"ecommerce_clean/internals/user/repository"
 	"ecommerce_clean/pkgs/logger"
+	"ecommerce_clean/pkgs/mail"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/paging"
 	"ecommerce_clean/pkgs/redis"
@@ -30,16 +31,18 @@ type IUserUseCase interface {
 type UserUseCase struct {
 	validator   validation.Validation
 	userRepo    repository.IUserRepository
-	minioClient *minio.MinioClient
+	minioClient minio.IUploadService
 	cache       redis.IRedis
+	mailer      mail.IMailer
 	token       token.IMarker
 }
 
 func NewUserUseCase(
 	validator validation.Validation,
 	userRepo repository.IUserRepository,
-	minioClient *minio.MinioClient,
+	minioClient minio.IUploadService,
 	cache redis.IRedis,
+	mailer mail.IMailer,
 	token token.IMarker,
 ) *UserUseCase {
 	return &UserUseCase{
@@ -47,6 +50,7 @@ func NewUserUseCase(
 		userRepo:    userRepo,
 		minioClient: minioClient,
 		cache:       cache,
+		mailer:      mailer,
 		token:       token,
 	}
 }
@@ -100,6 +104,10 @@ func (u *UserUseCase) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 	if err != nil {
 		logger.Errorf("Register.Create fail, email: %s, error: %s", req.Email, err)
 		return "", "", nil, err
+	}
+
+	if err := u.mailer.Send(user.Email, "Hello!", "<h1>Congratulations</h1><p>Your account has been successfully created</p>", true); err != nil {
+		logger.Fatalf("Send mail failure: %v", err)
 	}
 
 	tokenData := token.AuthPayload{

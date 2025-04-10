@@ -4,8 +4,8 @@ services:
     build:
       context: ./frontend
     ports:
-      - "8005:80"
-      - "443:443"
+      - '8005:80'
+      - '443:443'
     environment:
       - VITE_API_URL=http://ecommerce.app:8080/api/v1
     volumes:
@@ -15,7 +15,7 @@ services:
   ecommerce.app:
     container_name: ecommerce.app
     platform: linux/amd64
-    pid: "host"
+    pid: 'host'
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,8 +31,13 @@ services:
       REDIS_URI: ecommerce.redis:6379
       REDIS_PASSWORD: password
       REDIS_DB: 1
+      MAIL_PORT: 587
+      MAIL_HOST: smtp.gmail.com
+      MAIL_USER: anhquoc18092003@gmail.com
+      MAIL_PASSWORD: bkrsooqtpxeayyne
+      MAIL_FROM: anhquoc18092003@gmail.com
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       - ecommerce.db
       - ecommerce.minio
@@ -47,7 +52,7 @@ services:
       POSTGRES_PASSWORD: password123
       POSTGRES_DB: ecommerce_clean
     ports:
-      - "5433:5432"
+      - '5433:5432'
     volumes:
       - ecommerce_postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -57,21 +62,21 @@ services:
     container_name: ecommerce.redis
     restart: unless-stopped
     ports:
-      - "6389:6379"
+      - '6389:6379'
     volumes:
       - ecommerce_redis_data:/data
     environment:
       REDIS_PASSWORD: password
       REDIS_PORT: 6379
       REDIS_DATABASES: 1
-    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "password" ]
+    command: ['redis-server', '--appendonly', 'yes', '--requirepass', 'password']
 
   ecommerce.minio:
     image: minio/minio:latest
     container_name: ecommerce.minio
     ports:
-      - "9000:9000" # MinIO API
-      - "9001:9001" # MinIO Console
+      - '9000:9000' # MinIO API
+      - '9001:9001' # MinIO Console
     restart: unless-stopped
     volumes:
       - ecommerce_minio_data:/data
@@ -86,17 +91,17 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
-        - ecommerce.minio
-        - ecommerce.app
+      - ecommerce.minio
+      - ecommerce.app
 
   ecommerce.prometheus:
     image: prom/prometheus:latest
     container_name: ecommerce.prometheus
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - '9090:9090'
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
@@ -107,7 +112,7 @@ services:
     container_name: ecommerce.grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./grafana/data:/var/lib/grafana
     environment:

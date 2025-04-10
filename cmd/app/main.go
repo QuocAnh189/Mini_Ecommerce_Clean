@@ -5,6 +5,7 @@ import (
 	"ecommerce_clean/db"
 	"ecommerce_clean/pkgs/casbin"
 	"ecommerce_clean/pkgs/logger"
+	"ecommerce_clean/pkgs/mail"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
@@ -46,6 +47,7 @@ func main() {
 
 	validator := validation.New()
 
+	//minio
 	minioClient, err := minio.NewMinioClient(
 		cfg.MinioEndpoint,
 		cfg.MinioAccessKey,
@@ -58,18 +60,29 @@ func main() {
 		logger.Fatalf("Failed to connect to MinIO: %s", err)
 	}
 
+	//mailer
+	mailer := mail.NewMailer(
+		cfg.MailHost,
+		cfg.MailPort,
+		cfg.MailUser,
+		cfg.MailPassword,
+		cfg.MailFrom,
+	)
+
+	//cache
 	cache := redis.New(redis.Config{
 		Address:  cfg.RedisURI,
 		Password: cfg.RedisPassword,
 		Database: cfg.RedisDB,
 	})
 
+	//token
 	tokenMaker, err := token.NewJTWMarker()
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker, enforcer)
+	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker, mailer, enforcer)
 
 	wg.Add(1)
 
