@@ -36,6 +36,7 @@ export interface IListOrderRequest {
 
 export interface IPlaceOrderRequest {
   user_id: string
+  email: string
   lines: IPlaceOrderLineRequest[]
 }
 

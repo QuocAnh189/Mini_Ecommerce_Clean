@@ -46,6 +46,10 @@ Using the principles of Robert Martin (aka Uncle Bob).
 
 ![OrderModule](docs/static/cart_module.excalidraw.svg)
 
+## Use Case
+
+![UseCase](docs/static/ecommerce_usecase.drawio.png)
+
 ## Tech Stack
 
 ![TechStack](docs/static/techstack.excalidraw.svg)

@@ -5,6 +5,7 @@ import (
 	"ecommerce_clean/internals/order/repository"
 	"ecommerce_clean/internals/order/usecase"
 	productRepo "ecommerce_clean/internals/product/repository"
+	"ecommerce_clean/pkgs/mail"
 	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
@@ -18,11 +19,12 @@ func Routes(
 	sqlDB db.IDatabase,
 	validator validation.Validation,
 	cache redis.IRedis,
+	mailer mail.IMailer,
 	token token.IMarker,
 ) {
 	productRepository := productRepo.NewProductRepository(sqlDB)
 	orderRepository := repository.NewOrderRepository(sqlDB)
-	orderUsecase := usecase.NewOrderUseCase(validator, orderRepository, productRepository)
+	orderUsecase := usecase.NewOrderUseCase(validator, orderRepository, productRepository, mailer)
 	orderHandler := NewOrderHandler(orderUsecase)
 
 	authMiddleware := middlewares.NewAuthMiddleware(token, cache).TokenAuth()

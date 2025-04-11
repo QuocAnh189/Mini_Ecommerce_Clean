@@ -16,6 +16,7 @@ import { usePlaceOrderMutation } from '@redux/services/order'
 //interfaces
 import { ICartLine, IRemoveProductRequest, IUpdateCartLineRequest } from '@interfaces/cart'
 import { IPlaceOrderLineRequest } from '@interfaces/order'
+import { IUser } from '@interfaces/user'
 
 //utils
 import formatNumber from '@utils/formatNumber'
@@ -27,8 +28,8 @@ const Cart = () => {
   const [cartLinesChecked, setCartLinesChecked] = useState<ICartLine[]>([])
   const [totalPrice, setTotalPrice] = useState<number>(0)
 
-  const userId = JSON.parse(localStorage.getItem('user')!)?.id
-  const cartId = useAppSelector((state) => state.cart.cartId)
+  const user: IUser = JSON.parse(localStorage.getItem('user')!)
+  const cartId: string | null = useAppSelector((state) => state.cart.cartId)
 
   const [RemoveProduct] = useRemoveProductFromCartMutation()
   const [UpdateCartLine] = useUpdateCartLineMutation()
@@ -41,7 +42,7 @@ const Cart = () => {
     }
 
     try {
-      const result = await RemoveProduct({ userId, data }).unwrap()
+      const result = await RemoveProduct({ userId: user.id, data }).unwrap()
       if (result) {
         setCartLines((prev: ICartLine[]) => prev.filter((line: ICartLine) => line.product.id !== productId))
         toast.success('Remove product from cart successfully.')
@@ -60,7 +61,7 @@ const Cart = () => {
     }
 
     try {
-      const result = await UpdateCartLine({ userId, data }).unwrap()
+      const result = await UpdateCartLine({ userId: user.id, data }).unwrap()
       if (result) {
         setCartLines((prev: ICartLine[]) =>
           prev.map((line: ICartLine) => {
@@ -93,7 +94,7 @@ const Cart = () => {
     }))
 
     try {
-      const result = await PlaceOrder({ user_id: userId, lines }).unwrap()
+      const result = await PlaceOrder({ user_id: user.id, email: user.email, lines }).unwrap()
       if (result) {
         toast.success('Order successfully.')
         setCartLinesChecked([])

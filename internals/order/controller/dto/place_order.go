@@ -1,8 +1,9 @@
 package dto
 
 type PlaceOrderRequest struct {
-	UserID string                  `json:"user_id" validate:"required"`
-	Lines  []PlaceOrderLineRequest `json:"lines,omitempty" validate:"required,gt=0,lte=5,dive"`
+	UserID    string                  `json:"user_id" validate:"required"`
+	UserEmail string                  `json:"email" validate:"required"`
+	Lines     []PlaceOrderLineRequest `json:"lines,omitempty" validate:"required,gt=0,lte=5,dive"`
 }
 
 type PlaceOrderLineRequest struct {

@@ -107,7 +107,7 @@ func (u *UserUseCase) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 	}
 
 	if err := u.mailer.Send(user.Email, "Hello!", "<h1>Congratulations</h1><p>Your account has been successfully created</p>", true); err != nil {
-		logger.Fatalf("Send mail failure: %v", err)
+		logger.Errorf("Send mail failure: %v", err)
 	}
 
 	tokenData := token.AuthPayload{

@@ -7,6 +7,8 @@ import (
 	"ecommerce_clean/internals/order/repository"
 	productEntity "ecommerce_clean/internals/product/entity"
 	productRepo "ecommerce_clean/internals/product/repository"
+	"ecommerce_clean/pkgs/logger"
+	"ecommerce_clean/pkgs/mail"
 	"ecommerce_clean/pkgs/paging"
 	"ecommerce_clean/pkgs/validation"
 	"ecommerce_clean/utils"
@@ -24,17 +26,20 @@ type OrderUseCase struct {
 	validator   validation.Validation
 	orderRepo   repository.IOrderRepository
 	productRepo productRepo.IProductRepository
+	mailer      mail.IMailer
 }
 
 func NewOrderUseCase(
 	validator validation.Validation,
 	orderRepo repository.IOrderRepository,
 	productRepo productRepo.IProductRepository,
+	mailer mail.IMailer,
 ) *OrderUseCase {
 	return &OrderUseCase{
 		validator:   validator,
 		orderRepo:   orderRepo,
 		productRepo: productRepo,
+		mailer:      mailer,
 	}
 }
 
@@ -63,6 +68,10 @@ func (ou *OrderUseCase) PlaceOrder(ctx context.Context, req *dto.PlaceOrderReque
 
 	for _, line := range order.Lines {
 		line.Product = productMap[line.ProductID]
+	}
+
+	if err := ou.mailer.Send(req.UserEmail, "Hello!", "<h1>Order Successfully</h1><p>Thank you for your order</p>", true); err != nil {
+		logger.Errorf("Send mail failure: %v", err)
 	}
 
 	return order, nil

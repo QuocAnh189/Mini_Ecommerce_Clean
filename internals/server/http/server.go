@@ -123,6 +123,6 @@ func (s Server) MapRoutes() error {
 	userHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.mailer, s.tokenMarker)
 	productHttp.Routes(routesV1, s.db, s.validator, s.minioClient, s.cache, s.tokenMarker)
 	cartHttp.Routes(routesV1, s.db, s.validator, s.cache, s.tokenMarker)
-	orderHttp.Routes(routesV1, s.db, s.validator, s.cache, s.tokenMarker)
+	orderHttp.Routes(routesV1, s.db, s.validator, s.cache, s.mailer, s.tokenMarker)
 	return nil
 }
