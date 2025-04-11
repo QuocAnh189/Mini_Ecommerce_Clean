@@ -127,7 +127,7 @@ Holds configuration files for Prometheus, which collects and stores metrics from
 4. Run `docker-compose up --build -d` local dev environment
 5. Setup minio container.
 
-- Run `docker exect -it <container_id of ecommerce.minio> sh`.
+- Run `docker exec -it <container_id of ecommerce.minio> sh`.
 - Run `mc alias set myminio http://ecommerce.minio:9000 minioadmin minioadmin123`.
 - Run `mc anonymous set public myminio/ecommerce`.
 
