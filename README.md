@@ -123,7 +123,7 @@ Holds configuration files for Prometheus, which collects and stores metrics from
 
 1. Clone the repo and cd into it
 2. Set mode `LF` (not `CRLF`) for entrypoint.sh file
-3. Copy `.env.example` (not `app.example.env`) file to `.env` file and update your `env variables`
+3. Copy `.example.env` (not `app.example.env`) file to `.env` file and update your `env variables`
 4. Run `docker-compose up --build -d` local dev environment
 5. Setup minio container.
 
