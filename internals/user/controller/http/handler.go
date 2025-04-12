@@ -140,6 +140,35 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 	response.JSON(c, http.StatusOK, "Logout successfully")
 }
 
+//		@Summary	 Refresh user authentication token
+//	 @Description Refreshes the user's authentication token based on the provided refresh token credentials.
+//		@Tags		 Users
+//		@Produce	 json
+//		@Param		 _	body	dto.RefreshTokenReq	  true	"Body"
+//		@Success	 200	{object}	response.Response	"Successfully refreshed the token"
+//		@Failure	 401	{object}	response.Response	"Unauthorized - Invalid or expired refresh token"
+//		@Failure	 500	{object}	response.Response	"Internal Server Error - An error occurred while processing the request"
+//		@Router		 /api/v1/auth/refresh-token [post]
+func (h *AuthHandler) RefreshToken(c *gin.Context) {
+	userId := c.GetString("userId")
+	if userId == "" {
+		response.Error(c, http.StatusUnauthorized, nil, "Unauthorized")
+		return
+	}
+
+	accessToken, err := h.usecase.RefreshToken(c, userId)
+	if err != nil {
+		logger.Error("Failed to refresh token", err)
+		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
+		return
+	}
+
+	res := dto.RefreshTokenRes{
+		AccessToken: accessToken,
+	}
+	response.JSON(c, http.StatusOK, res)
+}
+
 // @Summary			Get Users List
 // @Description		Retrieves a paginated list of users based on search criteria.
 // @Tags			Users

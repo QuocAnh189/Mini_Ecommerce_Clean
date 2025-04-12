@@ -43,6 +43,7 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 
 		payload, err := a.token.ValidateToken(tokenValue)
 		if err != nil || payload == nil || payload.Type != tokenType {
+			logger.Info(tokenType)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()
 			return

@@ -2,6 +2,8 @@ package casbin
 
 import (
 	"ecommerce_clean/db"
+	"os"
+	"path/filepath"
 
 	"github.com/casbin/casbin/v2"
 	casbinadapter "github.com/casbin/gorm-adapter/v3"
@@ -13,16 +15,16 @@ func InitCasbinEnforcer(db db.IDatabase) (*casbin.Enforcer, error) {
 		return nil, err
 	}
 
-	////for local development
-	// wd, err := os.Getwd()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	//for local development
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
 
-	// modelPath := filepath.Join(wd, "policy/rbac_model.conf")
+	modelPath := filepath.Join(wd, "policy/rbac_model.conf")
 
 	////for docker container
-	modelPath := "/policy/rbac_model.conf"
+	// modelPath := "/policy/rbac_model.conf"
 
 	enforcer, err := casbin.NewEnforcer(modelPath, adapter)
 	if err != nil {

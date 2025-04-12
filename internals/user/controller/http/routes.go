@@ -28,12 +28,14 @@ func Routes(
 	userHandler := NewAuthHandler(userUseCase)
 
 	authMiddleware := middlewares.NewAuthMiddleware(token, cache).TokenAuth()
+	refreshMiddleware := middlewares.NewAuthMiddleware(token, cache).TokenRefresh()
 
 	authRouter := r.Group("/auth")
 	{
 		authRouter.POST("/signup", userHandler.SignUp)
 		authRouter.POST("/signin", userHandler.SignIn)
 		authRouter.POST("/signout", authMiddleware, userHandler.SignOut)
+		authRouter.POST("/refresh-token", refreshMiddleware, userHandler.RefreshToken)
 	}
 
 	userRouter := r.Group("/users").Use(authMiddleware)

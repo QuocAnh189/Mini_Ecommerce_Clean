@@ -1,4 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
+
+//interceptors
+import baseQueryWithReauth from '@redux/interceptor/baseQueryWithReauth'
 
 //interfaces
 import { IListOrderRequest, IOrder, IPlaceOrderRequest } from '@interfaces/order'
@@ -6,18 +9,7 @@ import { IListData } from '@interfaces/common'
 
 export const apiOrder = createApi({
   reducerPath: 'apiOrder',
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL,
-    prepareHeaders: (headers) => {
-      const token = JSON.parse(localStorage.getItem('token')!)?.accessToken
-
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
-      }
-
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   keepUnusedDataFor: 20,
   tagTypes: ['Order'],
 
