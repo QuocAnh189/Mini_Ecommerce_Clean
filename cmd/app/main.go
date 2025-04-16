@@ -35,13 +35,15 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	if err := database.AutoMigrate(
+	err = database.AutoMigrate(
 		&userEntity.User{},
 		&productEntity.Product{},
 		&orderEntity.Order{},
 		&orderEntity.OrderLine{},
 		&cartEntity.Cart{},
-		&cartEntity.CartLine{}); err != nil {
+		&cartEntity.CartLine{},
+	)
+	if err != nil {
 		logger.Fatal("Database migration fail", err)
 	}
 

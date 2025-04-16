@@ -21,7 +21,6 @@ func Routes(
 	cache redis.IRedis,
 	token token.IMarker,
 ) {
-
 	cartRepository := cartRepo.NewCartRepository(sqlDB)
 	productRepository := productRepo.NewProductRepository(sqlDB)
 	cartUseCase := usecase.NewCartUseCase(validator, cartRepository, productRepository)
