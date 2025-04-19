@@ -31,7 +31,6 @@ func NewJTWMarker() (*JTWMarker, error) {
 
 func (j *JTWMarker) GenerateAccessToken(payload *AuthPayload) string {
 	cfg := configs.GetConfig()
-	logger.Info(AccessTokenType)
 	newPayload := NewAuthPayload(payload.ID, payload.Email, payload.Role, time.Minute, AccessTokenType)
 
 	tokenContent := jwt.MapClaims{
