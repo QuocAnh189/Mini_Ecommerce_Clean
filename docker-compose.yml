@@ -1,8 +1,6 @@
 services:
   ecommerce.frontend:
     container_name: ecommerce.frontend
-    env_file:
-      - .env
     build:
       context: ./frontend
     ports:
@@ -21,8 +19,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
     environment:
       ENVIRONMENT: ${ENVIRONMENT}
       HTTP_PORT: ${HTTP_PORT}
@@ -51,8 +47,7 @@ services:
   ecommerce.db:
     image: postgres:16
     container_name: ecommerce.db
-    env_file:
-      - .env
+
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -66,8 +61,6 @@ services:
   ecommerce.redis:
     image: redis:latest
     container_name: ecommerce.redis
-    env_file:
-      - .env
     restart: unless-stopped
     ports:
       - '6389:6379'
@@ -82,8 +75,6 @@ services:
   ecommerce.minio:
     image: minio/minio:latest
     container_name: ecommerce.minio
-    env_file:
-      - .env
     ports:
       - '9000:9000' # MinIO API
       - '9001:9001' # MinIO Console

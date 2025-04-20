@@ -50,7 +50,7 @@ func (a *AuthMiddleware) Token(tokenType string, cache redis.IRedis) gin.Handler
 		}
 
 		var rawValue string
-		if err := cache.Get(fmt.Sprintf("blacklist:%s_%s", payload.ID, payload.Jit), &rawValue); err != nil {
+		if err = cache.Get(fmt.Sprintf("blacklist:%s_%s", payload.ID, payload.Jit), &rawValue); err != nil {
 			logger.Error("Failed to get value from Redis:", err)
 		}
 

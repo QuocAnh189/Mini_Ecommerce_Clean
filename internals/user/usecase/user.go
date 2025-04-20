@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,7 +24,7 @@ type IUserUseCase interface {
 	SignIn(ctx context.Context, req *dto.SignInRequest) (string, string, *entity.User, error)
 	SignUp(ctx context.Context, req *dto.SignUpRequest) (string, string, *entity.User, error)
 	SignOut(ctx context.Context, userID string, jit string) error
-	RefreshToken(ctx context.Context, userId string) (string, error)
+	RefreshToken(ctx context.Context, userId string, jit string) (string, error)
 	ListUsers(ctx context.Context, req *dto.ListUserRequest) ([]*entity.User, *paging.Pagination, error)
 	GetUserById(ctx context.Context, userID string) (*entity.User, error)
 	DeleteUser(ctx context.Context, id string) error
@@ -74,7 +75,7 @@ func (u *UserUseCase) SignIn(ctx context.Context, req *dto.SignInRequest) (strin
 		ID:    user.ID,
 		Email: user.Email,
 		Role:  user.Role,
-		Type:  token.AccessTokenType,
+		Jit:   uuid.New().String(),
 	}
 
 	accessToken := u.token.GenerateAccessToken(&tokenData)
@@ -116,6 +117,7 @@ func (u *UserUseCase) SignUp(ctx context.Context, req *dto.SignUpRequest) (strin
 		ID:    user.ID,
 		Email: user.Email,
 		Role:  user.Role,
+		Jit:   uuid.New().String(),
 	}
 
 	accessToken := u.token.GenerateAccessToken(&tokenData)
@@ -138,7 +140,7 @@ func (u *UserUseCase) SignOut(ctx context.Context, userID string, jit string) er
 	return nil
 }
 
-func (u *UserUseCase) RefreshToken(ctx context.Context, userId string) (string, error) {
+func (u *UserUseCase) RefreshToken(ctx context.Context, userId string, jit string) (string, error) {
 	user, err := u.userRepo.GetUserById(ctx, userId)
 	if err != nil {
 		logger.Errorf("RefreshToken.GetUserByID fail, id: %s, error: %s", userId, err)
@@ -149,6 +151,7 @@ func (u *UserUseCase) RefreshToken(ctx context.Context, userId string) (string, 
 		ID:    user.ID,
 		Email: user.Email,
 		Role:  user.Role,
+		Jit:   jit,
 	}
 
 	accessToken := u.token.GenerateAccessToken(&tokenData)

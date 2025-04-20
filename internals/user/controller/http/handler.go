@@ -122,14 +122,13 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 		return
 	}
 
-	jit := c.GetString("jit")
-
 	userID, exists := c.Get("userId")
 	if !exists {
 		response.Error(c, http.StatusNotFound, nil, "Unauthorized")
 		return
 	}
 
+	jit := c.GetString("jit")
 	err := h.usecase.SignOut(c, userID.(string), jit)
 	if err != nil {
 		logger.Error("Failed to sign out", err)
@@ -156,7 +155,8 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	accessToken, err := h.usecase.RefreshToken(c, userId)
+	jit := c.GetString("jit")
+	accessToken, err := h.usecase.RefreshToken(c, userId, jit)
 	if err != nil {
 		logger.Error("Failed to refresh token", err)
 		response.Error(c, http.StatusInternalServerError, err, "Something went wrong")
