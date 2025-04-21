@@ -167,11 +167,11 @@ func (u *UserUseCase) ListUsers(ctx context.Context, req *dto.ListUserRequest) (
 }
 
 func (u *UserUseCase) GetUserById(ctx context.Context, userID string) (*entity.User, error) {
-	card, err := u.userRepo.GetUserById(ctx, userID)
+	user, err := u.userRepo.GetUserById(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
-	return card, nil
+	return user, nil
 }
 
 func (u *UserUseCase) DeleteUser(ctx context.Context, id string) error {
