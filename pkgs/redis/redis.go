@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	goredis "github.com/redis/go-redis/v9"
@@ -42,6 +43,10 @@ type redis struct {
 func New(config Config) IRedis {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
+
+	fmt.Println(config.Address)
+	fmt.Println(config.Password)
+	fmt.Println(config.Database)
 
 	rdb := goredis.NewClient(&goredis.Options{
 		Addr:     config.Address,

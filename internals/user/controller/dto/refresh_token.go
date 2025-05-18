@@ -1,7 +1,7 @@
 package dto
 
 type RefreshTokenReq struct {
-	RefreshToken string `json:"refreshToken" validate:"required"`
+	RefreshToken string `json:"refreshToken" binding:"required" validate:"required"`
 }
 
 type RefreshTokenRes struct {

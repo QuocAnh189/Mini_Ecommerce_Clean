@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-minio
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-minio
+  template:
+    metadata:
+      labels:
+        app: ecommerce-minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          ports:
+            - containerPort: 9000
+            - containerPort: 9001
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: minio-root-user
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: minio-root-password
+          command: ['server', '/data', '--console-address', ':9001']
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+            - name: minio-config
+              mountPath: /root/.minio
+      volumes:
+        - name: minio-data
+          emptyDir: {}
+        - name: minio-config
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommerce-minio
+spec:
+  selector:
+    app: ecommerce-minio
+  ports:
+    - name: api
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    - name: console
+      protocol: TCP
+      port: 9001
+      targetPort: 9001

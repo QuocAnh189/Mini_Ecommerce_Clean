@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-redis
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-redis
+  template:
+    metadata:
+      labels:
+        app: ecommerce-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: redis-password
+          command: ['redis-server', '--appendonly', 'yes', '--requirepass', '$(REDIS_PASSWORD)']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommerce-redis
+spec:
+  selector:
+    app: ecommerce-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

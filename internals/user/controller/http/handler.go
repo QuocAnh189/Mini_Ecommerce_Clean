@@ -83,8 +83,10 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, err, "Invalid parameters")
 		return
 	}
-	accessToken, refreshToken, user, err := h.usecase.SignIn(c, &req)
 
+	logger.Info("Sign in request: ", req)
+
+	accessToken, refreshToken, user, err := h.usecase.SignIn(c, &req)
 	if err != nil {
 		logger.Error("Failed to sign up ", err)
 		switch err.Error() {

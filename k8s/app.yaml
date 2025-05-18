@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-app
+  namespace: ecommerce
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ecommerce-app
+  template:
+    metadata:
+      labels:
+        app: ecommerce-app
+    spec:
+      containers:
+        - name: app
+          image: anhquoc1809/ecommerce.app:latest # <--- CHÚ Ý: Thay thế image của bạn
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VITE_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: vite-api-url
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: environment
+            - name: HTTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: http-port
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: auth-secret
+            - name: DATABASE_URI
+              value: 'postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@ecommerce-db:5432/$(POSTGRES_DB)'
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: minio-endpoint
+            - name: MINIO_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: minio-bucket
+            - name: MINIO_BASEURL
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: minio-baseurl
+            - name: MINIO_USESSL
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: minio-usessl
+            - name: MINIO_ACCESSKEY
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: minio-access-key
+            - name: MINIO_SECRETKEY
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: minio-secret-key
+            - name: REDIS_URI
+              value: 'redis://default:$(REDIS_PASSWORD)@ecommerce-redis:6379/$(REDIS_DB)'
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: redis-password
+            - name: REDIS_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: redis-db
+            - name: MAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: mail-port
+            - name: MAIL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: mail-host
+            - name: MAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: mail-user
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: mail-password
+            - name: MAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: mail-from
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommerce-app
+spec:
+  selector:
+    app: ecommerce-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

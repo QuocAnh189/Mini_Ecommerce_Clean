@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 
   ecommerce.app:
-    container_name: ecommerce.app
+    # container_name: ecommerce.app
     platform: linux/amd64
     pid: 'host'
     build:
@@ -37,12 +37,13 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM: ${MAIL_FROM}
     ports:
-      - '8080:8080'
+      - '8080'
     depends_on:
       - ecommerce.db
       - ecommerce.minio
       - ecommerce.redis
     restart: unless-stopped
+    scale: 3
 
   ecommerce.db:
     image: postgres:16

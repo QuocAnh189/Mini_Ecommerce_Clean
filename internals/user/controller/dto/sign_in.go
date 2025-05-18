@@ -1,8 +1,8 @@
 package dto
 
 type SignInRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" binding:"required" validate:"required,email"`
+	Password string `json:"password" binding:"required" validate:"required"`
 }
 
 type SignInResponse struct {
