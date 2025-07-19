@@ -6,6 +6,7 @@ import (
 	"ecommerce_clean/pkgs/middlewares"
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/token"
+	"ecommerce_clean/pkgs/twilio"
 	"fmt"
 
 	"github.com/casbin/casbin/v2"
@@ -38,6 +39,7 @@ type Server struct {
 	cache       redis.IRedis
 	tokenMarker token.IMarker
 	mailer      mail.IMailer
+	twilio      twilio.Provider
 	enforcer    *casbin.Enforcer
 }
 
@@ -48,6 +50,7 @@ func NewServer(
 	cache redis.IRedis,
 	tokenMarker token.IMarker,
 	mailer mail.IMailer,
+	twilio twilio.Provider,
 	enforcer *casbin.Enforcer,
 ) *Server {
 	return &Server{
@@ -59,7 +62,8 @@ func NewServer(
 		cache:       cache,
 		tokenMarker: tokenMarker,
 		mailer:      mailer,
-		enforcer:    enforcer,
+		// twilio:      twilio,
+		enforcer: enforcer,
 	}
 }
 

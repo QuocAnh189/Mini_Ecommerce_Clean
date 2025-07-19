@@ -37,6 +37,10 @@ type Config struct {
 	MailUser             string        `mapstructure:"MAIL_USER"`
 	MailPassword         string        `mapstructure:"MAIL_PASSWORD"`
 	MailFrom             string        `mapstructure:"MAIL_FROM"`
+	TwilioAccountSID     string        `mapstructure:"TWILIO_ACCOUNT_SID"`
+	TwilioAuthToken      string        `mapstructure:"TWILIO_AUTH_TOKEN"`
+	TwilioFromNumber     string        `mapstructure:"TWILIO_FROM_PHONE_NUMBER"`
+	TwilioServiceID      string        `mapstructure:"TWILIO_MESSAGING_SERVICE_SID"`
 }
 
 var (
@@ -76,6 +80,10 @@ func LoadConfig() *Config {
 		MailUser:             viper.GetString("MAIL_USER"),
 		MailPassword:         viper.GetString("MAIL_PASSWORD"),
 		MailFrom:             viper.GetString("MAIL_FROM"),
+		TwilioAccountSID:     viper.GetString("TWILIO_ACCOUNT_SID"),
+		TwilioAuthToken:      viper.GetString("TWILIO_AUTH_TOKEN"),
+		TwilioFromNumber:     viper.GetString("TWILIO_FROM_PHONE_NUMBER"),
+		TwilioServiceID:      viper.GetString("TWILIO_MESSAGING_SERVICE_SID"),
 	}
 
 	if cfg.DatabaseURI == "" {

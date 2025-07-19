@@ -9,6 +9,7 @@ import (
 	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
+	"ecommerce_clean/pkgs/twilio"
 	"ecommerce_clean/pkgs/validation"
 	"sync"
 
@@ -71,6 +72,12 @@ func main() {
 		cfg.MailFrom,
 	)
 
+	// twilio
+	twilioProvider := twilio.NewTwilioSmsProvider(cfg.TwilioAccountSID, cfg.TwilioAuthToken, cfg.TwilioFromNumber, cfg.TwilioServiceID)
+	if err != nil {
+		logger.Fatalf("Failed to initialize Twilio provider: %s", err)
+	}
+
 	//cache
 	cache := redis.New(redis.Config{
 		Address:  cfg.RedisURI,
@@ -84,7 +91,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker, mailer, enforcer)
+	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker, mailer, twilioProvider, enforcer)
 
 	wg.Add(1)
 
