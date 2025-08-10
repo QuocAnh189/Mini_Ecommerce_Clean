@@ -13,7 +13,7 @@ credentials.json
 
 
 # Config
-app.env
+.app.env
 
 # Binaries for programs and plugins
 *.exe

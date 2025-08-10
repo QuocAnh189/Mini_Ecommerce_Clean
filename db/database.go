@@ -56,8 +56,9 @@ func NewDatabase(uri string) (*Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	sqlDB.SetMaxIdleConns(20)
 	sqlDB.SetMaxOpenConns(200)
+	sqlDB.SetMaxIdleConns(20)
+	sqlDB.SetConnMaxLifetime(time.Minute * 2)
 
 	return &Database{
 		db: database,

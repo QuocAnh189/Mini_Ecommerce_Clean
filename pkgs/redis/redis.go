@@ -40,7 +40,7 @@ type redis struct {
 }
 
 // New Redis interface with config
-func New(config Config) IRedis {
+func NewRedis(config Config) IRedis {
 	ctx, cancel := context.WithTimeout(context.Background(), Timeout*time.Second)
 	defer cancel()
 

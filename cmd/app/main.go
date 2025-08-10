@@ -5,19 +5,13 @@ import (
 	"ecommerce_clean/db"
 	"ecommerce_clean/pkgs/casbin"
 	"ecommerce_clean/pkgs/logger"
-	"ecommerce_clean/pkgs/mail"
-	"ecommerce_clean/pkgs/minio"
 	"ecommerce_clean/pkgs/redis"
 	"ecommerce_clean/pkgs/token"
-	"ecommerce_clean/pkgs/twilio"
 	"ecommerce_clean/pkgs/validation"
 	"sync"
 
-	cartEntity "ecommerce_clean/internals/cart/entity"
-	orderEntity "ecommerce_clean/internals/order/entity"
-	productEntity "ecommerce_clean/internals/product/entity"
+	"ecommerce_clean/internals/initial"
 	httpServer "ecommerce_clean/internals/server/http"
-	userEntity "ecommerce_clean/internals/user/entity"
 )
 
 var wg sync.WaitGroup
@@ -36,22 +30,15 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	err = database.AutoMigrate(
-		&userEntity.User{},
-		&productEntity.Product{},
-		&orderEntity.Order{},
-		&orderEntity.OrderLine{},
-		&cartEntity.Cart{},
-		&cartEntity.CartLine{},
-	)
+	err = initial.InitMigrations(database)
 	if err != nil {
-		logger.Fatal("Database migration fail", err)
+		logger.Fatal("Database migration failed", err)
 	}
 
 	validator := validation.New()
 
 	//minio
-	minioClient, err := minio.NewMinioClient(
+	minioClient, err := initial.InitMinioClient(
 		cfg.MinioEndpoint,
 		cfg.MinioAccessKey,
 		cfg.MinioSecretKey,
@@ -64,26 +51,19 @@ func main() {
 	}
 
 	//mailer
-	mailer := mail.NewMailer(
-		cfg.MailHost,
-		cfg.MailPort,
-		cfg.MailUser,
-		cfg.MailPassword,
-		cfg.MailFrom,
-	)
+	mailer := initial.InitMailer(cfg.MailHost, cfg.MailPort, cfg.MailUser, cfg.MailPassword, cfg.MailFrom)
 
 	// twilio
-	twilioProvider := twilio.NewTwilioSmsProvider(cfg.TwilioAccountSID, cfg.TwilioAuthToken, cfg.TwilioFromNumber, cfg.TwilioServiceID)
+	twilioProvider, err := initial.InitTwilioProvider(cfg.TwilioAccountSID, cfg.TwilioAuthToken, cfg.TwilioFromNumber, cfg.TwilioServiceID)
 	if err != nil {
 		logger.Fatalf("Failed to initialize Twilio provider: %s", err)
 	}
 
-	//cache
-	cache := redis.New(redis.Config{
-		Address:  cfg.RedisURI,
-		Password: cfg.RedisPassword,
-		Database: cfg.RedisDB,
-	})
+	//redis
+	redis, err := initial.InitRedis(redis.Config{Address: cfg.RedisURI, Password: cfg.RedisPassword, Database: cfg.RedisDB})
+	if err != nil {
+		logger.Fatalf("Failed to initialize Redis: %s", err)
+	}
 
 	//token
 	tokenMaker, err := token.NewJTWMarker()
@@ -91,7 +71,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	httpSvr := httpServer.NewServer(validator, database, minioClient, cache, tokenMaker, mailer, twilioProvider, enforcer)
+	httpSvr := httpServer.NewServer(validator, database, minioClient, redis, tokenMaker, mailer, twilioProvider, enforcer)
 
 	wg.Add(1)
 

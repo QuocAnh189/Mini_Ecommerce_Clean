@@ -50,8 +50,8 @@ var (
 func LoadConfig() *Config {
 	viper.AutomaticEnv()
 
-	if _, err := os.Stat("app.env"); err == nil {
-		viper.SetConfigFile("app.env")
+	if _, err := os.Stat(".env"); err == nil {
+		viper.SetConfigFile(".env")
 		viper.SetConfigType("env")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal("Error loading configuration file: %v", err)
